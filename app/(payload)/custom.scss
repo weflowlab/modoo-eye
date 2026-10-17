@@ -1,1 +1,65 @@
-/* Payload 관리자 UI 커스텀 스타일. 필요 시 여기에 추가. */
+/* Payload 관리자 UI 브랜드 스타일. 글꼴, 강조색(남색), 버튼, 로고 영역만 손대고 골격은 유지한다. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+:root {
+  /* 글꼴: 블로그와 동일한 Pretendard */
+  --font-body: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  /* 강조색(선택·활성·링크·포커스)을 Payload 기본 하늘색에서 모두의안과 남색 계열로 교체 */
+  --color-success-50: #eef3fa;
+  --color-success-100: #dde7f5;
+  --color-success-150: #c6d7ee;
+  --color-success-200: #a9c3e4;
+  --color-success-250: #8aaedb;
+  --color-success-300: #6b98d0;
+  --color-success-350: #4f84c6;
+  --color-success-400: #3471ba;
+  --color-success-450: #1f5fab;
+  --color-success-500: #004994;
+  --color-success-550: #00418a;
+  --color-success-600: #003a7c;
+  --color-success-650: #00336d;
+  --color-success-700: #002c5e;
+  --color-success-750: #00254f;
+  --color-success-800: #001e40;
+  --color-success-850: #001732;
+  --color-success-900: #001124;
+  --color-success-950: #000b17;
+
+  /* 모서리를 조금 더 둥글게 */
+  --style-radius-s: 6px;
+  --style-radius-m: 10px;
+  --style-radius-l: 14px;
+}
+
+/* 기본(검정) 버튼을 남색 버튼으로 */
+.btn--style-primary {
+  --bg-color: #004994;
+  --hover-bg: #1f6cc4;
+  --color: #fff;
+}
+
+/* 왼쪽 메뉴 활성 항목 */
+.nav__link--active,
+.nav__link:hover {
+  color: #004994;
+}
+
+/* 로그인 화면: 로고 아래 여백, 폼 폭 */
+.login .graphic-logo {
+  margin-bottom: 1.5rem;
+}
+
+/* 로고 공통 (login / nav) */
+.modoo-logo {
+  display: block;
+  height: auto;
+}
+.modoo-logo--login {
+  width: 220px;
+  margin: 0 auto;
+}
+.modoo-logo--nav {
+  width: 150px;
+}

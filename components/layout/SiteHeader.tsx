@@ -25,13 +25,11 @@ export function SiteHeader() {
     () => false,
   );
 
-  // 메뉴 목록: About, 의료진소개, 카테고리 4개. 현재 경로와 일치하면 active
+  // 메뉴 목록: 카테고리(진료 분야). 병원 소개·의료진은 기존 홈페이지가 담당하므로 메뉴에 두지 않는다
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
-  const nav: NavItem[] = [
-    { id: "about", href: "/about", label: "About" },
-    { id: "doctors", href: "/doctors", label: "의료진소개" },
-    ...categories.map((c) => ({ id: c.slug, href: `/${c.slug}`, label: c.name })),
-  ].map((n) => ({ ...n, active: isActive(n.href) }));
+  const nav: NavItem[] = categories
+    .map((c) => ({ id: c.slug, href: `/${c.slug}`, label: c.name }))
+    .map((n) => ({ ...n, active: isActive(n.href) }));
 
   // 경로가 바뀌면 열려 있던 패널 모두 닫기 (렌더 중 파생 상태 갱신)
   const [prevPath, setPrevPath] = useState(pathname);

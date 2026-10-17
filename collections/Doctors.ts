@@ -11,11 +11,7 @@ export const Doctors: CollectionConfig = {
     useAsTitle: "name",
     defaultColumns: ["name", "title", "order"],
     group: "콘텐츠",
-    // 의료진 상세 미리보기
-    livePreview: {
-      url: ({ data }) =>
-        `${process.env.NEXT_PUBLIC_SERVER_URL || ""}/next/preview?path=${encodeURIComponent(`/doctors/${data?.slug ?? ""}`)}&previewSecret=${process.env.PREVIEW_SECRET}`,
-    },
+    description: "글 하단 '이 글을 쓴 의료진' 카드에 표시됩니다. 별도 의료진 페이지는 없습니다.",
   },
   fields: [
     { name: "name", label: "이름", type: "text", required: true },
@@ -49,9 +45,10 @@ export const Doctors: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, context }) => {
+      async ({ context }) => {
         if (context.disableRevalidate) return;
-        await revalidate(["/", "/doctors", `/doctors/${doc.slug}`]);
+        // 작성자 카드가 글마다 들어가므로 글 페이지 전체를 갱신
+        await revalidate(["/"], true);
       },
     ],
   },

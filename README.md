@@ -31,9 +31,9 @@ npm run seed             # (dev 서버 실행 중) 샘플 데이터 + 첫 관리
 ## 구조
 
 ```
-app/(frontend)/        블로그 페이지 (메인, 카테고리, 글 상세, 의료진, 검색, rss, sitemap)
+app/(frontend)/        블로그 페이지 (메인, 카테고리, 글 상세, 검색, rss, sitemap)
 app/(payload)/         Payload 관리자(/admin)와 REST API(/api)
-collections/, globals/ Payload 스키마 (글, 카테고리, 의료진, 이미지, 관리자 / 병원 정보, 메인 페이지)
+collections/, globals/ Payload 스키마 (글, 카테고리, 의료진(작성자 카드용), 이미지, 관리자 / 병원 정보, 메인 페이지)
 lib/payload.ts         프론트 데이터 계층 (Payload 문서 → lib/types.ts 타입)
 lib/mock.ts            시드 데이터 + 시드 전 폴백
 components/            UI (레퍼런스 blog.kimsretina.com 레이아웃 기반)

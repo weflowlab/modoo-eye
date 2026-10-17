@@ -70,9 +70,10 @@ export function ClinicIntroSection({ banners: bannersProp, introLabel, introText
           <h2 className="max-w-2xl text-xl font-bold leading-tight whitespace-pre-line md:text-5xl">{b.label}</h2>
           <p className="mt-4 max-w-xl text-base text-background/85 whitespace-pre-line md:text-xl">{b.text}</p>
           <div className="mt-4 md:mt-6">
-            {/* 레퍼런스: 흰 알약 버튼, hover 시 primary 배경 */}
+            {/* 레퍼런스: 흰 알약 버튼, hover 시 primary 배경. 병원 소개는 기존 홈페이지로 연결 */}
             <Button
-              href="/about"
+              href={clinic.homepageUrl}
+              external
               variant="ghost"
               size="lg"
               className="inline-flex items-center justify-center bg-white rounded-full text-foreground h-11 md:h-12 px-6 md:px-7 text-base md:text-lg font-medium gap-2 hover:bg-primary hover:text-primary-foreground transition-all"

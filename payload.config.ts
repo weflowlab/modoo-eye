@@ -24,7 +24,17 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: " | 모두의안과 블로그 관리자" },
+    meta: {
+      titleSuffix: " | 모두의안과 블로그 관리자",
+      icons: [{ rel: "icon", type: "image/png", url: "/logo.png" }],
+    },
+    // 로그인 화면 로고 / 왼쪽 메뉴 로고를 병원 로고로 교체 (스타일은 app/(payload)/custom.scss)
+    components: {
+      graphics: {
+        Logo: "@/components/admin/Logo#Logo",
+        Icon: "@/components/admin/Icon#Icon",
+      },
+    },
     // 미리보기 창 기기 크기 (글 작성 중 미리보기)
     livePreview: {
       breakpoints: [
