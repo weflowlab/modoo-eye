@@ -11,7 +11,7 @@ type Props = {
 
 export function PostGrid({ posts, showSummary = false, className = "" }: Props) {
   return (
-    <div className={`grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4 ${className}`}>
+    <div className={`grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 ${className}`}>
       {posts.map((post) => (
         <PostCard key={`${post.category}/${post.slug}`} post={post} showSummary={showSummary} />
       ))}

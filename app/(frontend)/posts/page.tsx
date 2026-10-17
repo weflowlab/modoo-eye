@@ -64,5 +64,5 @@ async function PostsContent({
 // 글이 없으면 빈 상태 문구
 function PostList({ posts }: { posts: Post[] }) {
   if (posts.length === 0) return <EmptyPosts />;
-  return <PostListWithMore posts={posts} initialCount={9} step={9} />;
+  return <PostListWithMore posts={posts} initialCount={8} step={8} />;
 }

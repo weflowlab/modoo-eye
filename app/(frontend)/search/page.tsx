@@ -36,7 +36,7 @@ async function SearchContent({ keywords, searchParams }: { keywords: string[] } 
       {/* 레퍼런스: 결과 영역 py-12 md:py-20 */}
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl py-12 md:py-20">
         {results.length > 0 ? (
-          <PostListWithMore key={query} posts={results} variant="list" highlight={query} initialCount={9} step={9} />
+          <PostListWithMore key={query} posts={results} variant="list" highlight={query} initialCount={8} step={8} />
         ) : query ? (
           // 결과 없음 상태
           <div className="flex flex-col items-center gap-7.5 py-12 text-center md:py-20">

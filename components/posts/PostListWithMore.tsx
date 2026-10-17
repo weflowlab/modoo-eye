@@ -41,7 +41,7 @@ export function PostListWithMore({
         </div>
       )}
 
-      {/* 더보기 버튼: 다 보여주면 숨김. 레퍼런스: outline lg, rounded-full px-10, h-10 */}
+      {/* 더보기 버튼: 다 보여주면 숨김. 한 줄(4개) 단위로 추가되도록 호출부에서 8개씩 */}
       {hasMore && (
         <div className="mt-12 flex justify-center md:mt-16">
           <button

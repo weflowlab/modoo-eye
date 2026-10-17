@@ -169,7 +169,7 @@ function isoDaysBefore(n: number) {
     : `2026-09-${String(30 + day).padStart(2, "0")}T00:00:00.000Z`;
 }
 
-// 자리표시 글 목록: [카테고리 slug, 제목, 작성 의료진 slug]. 카테고리별 3~4개, 작성자는 전문 분야에 맞춰 분산.
+// 자리표시 글 목록: [카테고리 slug, 제목, 작성 의료진 slug]. 카테고리별 2개, 작성자는 전문 분야에 맞춰 분산.
 const titles = [
   ["retina", "당뇨망막병증, 검사 주기와 치료 시기", "lee-younghoon"],
   ["glaucoma", "녹내장 초기 증상과 조기 발견이 중요한 이유", "jin-sunyoung"],
@@ -181,15 +181,6 @@ const titles = [
   ["cataract", "노안 교정 다초점 인공수정체 선택 기준", "jin-sunyoung"],
   ["cornea", "마이봄샘 기능장애와 눈꺼풀 관리", "son-myungseo"],
   ["oculoplastic", "눈물흘림 원인과 눈물길 검사", "ha-myungsook"],
-  ["retina", "망막박리, 통증 없이 진행되는 응급 질환", "lee-younghoon"],
-  ["glaucoma", "녹내장 안약, 꾸준히 넣어야 하는 이유", "jin-sunyoung"],
-  ["cataract", "백내장 수술 후 관리와 주의사항", "baek-seungkuk"],
-  ["cornea", "인공눈물 올바르게 고르는 법", "son-myungseo"],
-  ["oculoplastic", "다래끼와 눈꺼풀 혹, 어떻게 구분하나요", "ha-myungsook"],
-  ["retina", "비문증·광시증, 눈앞의 날파리와 위험 신호", "baek-seungkuk"],
-  ["glaucoma", "녹내장 수술은 언제 필요한가요", "jin-sunyoung"],
-  ["cataract", "후발백내장, 재수술 대신 YAG 레이저", "jin-sunyoung"],
-  ["cornea", "각막염과 결막염, 어떻게 다른가요", "son-myungseo"],
 ] as const;
 
 const POST_COUNT = titles.length;
