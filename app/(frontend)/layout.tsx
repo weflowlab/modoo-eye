@@ -50,7 +50,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className="flex min-h-full flex-col bg-white text-slate-800">
+      {/* 모바일은 하단 고정 바(전화/톡톡) 높이만큼 아래 여백을 둬 푸터가 가려지지 않게 */}
+      <body className="flex min-h-full flex-col bg-white pb-14 text-slate-800 md:pb-0">
         <SiteProvider value={site}>
           {/* 관리자 미리보기 중이면 저장할 때마다 새로고침 */}
           {isPreview && <LivePreviewListener />}

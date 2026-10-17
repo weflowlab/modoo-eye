@@ -217,6 +217,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * 글 하단 '이 글을 쓴 의료진' 카드에 표시됩니다. 별도 의료진 페이지는 없습니다.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "doctors".
  */
@@ -842,6 +844,7 @@ export interface Clinic {
  */
 export interface Home {
   id: number;
+  heroImage?: (number | null) | Media;
   heroTitle?: string | null;
   heroText?: string | null;
   searchPlaceholder?: string | null;
@@ -967,6 +970,7 @@ export interface ClinicSelect<T extends boolean = true> {
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
+  heroImage?: T;
   heroTitle?: T;
   heroText?: T;
   searchPlaceholder?: T;

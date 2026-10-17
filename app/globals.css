@@ -136,6 +136,8 @@
   --animate-cta-ripple: cta-ripple 3s cubic-bezier(0.25, 0.6, 0.4, 1) infinite;
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  /* 퀵 버튼 아이콘 흔들림: 3.6초마다 한 번 좌우로 흔들리고 나머지는 정지 */
+  --animate-wiggle: wiggle 3.6s ease-in-out infinite;
 
   @keyframes pulse-ring {
     0% { opacity: 1; transform: scale(0.96); }
@@ -165,6 +167,14 @@
   @keyframes accordion-down {
     0% { height: 0; }
     to { height: var(--accordion-panel-height, auto); }
+  }
+  @keyframes wiggle {
+    0%, 30%, 100% { transform: rotate(0); }
+    5% { transform: rotate(-14deg); }
+    10% { transform: rotate(12deg); }
+    15% { transform: rotate(-10deg); }
+    20% { transform: rotate(8deg); }
+    25% { transform: rotate(-4deg); }
   }
   @keyframes accordion-up {
     0% { height: var(--accordion-panel-height, auto); }
@@ -202,4 +212,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  /* 한국어 줄바꿈: 단어 중간에서 끊지 않고 어절 단위로 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* 누를 수 있는 요소는 손가락 커서 (Tailwind v4 는 버튼 기본 커서가 화살표) */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+summary {
+  cursor: pointer;
 }

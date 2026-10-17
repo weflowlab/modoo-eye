@@ -20,6 +20,7 @@ export const HomePage: GlobalConfig = {
         {
           label: "히어로·배너",
           fields: [
+            { name: "heroImage", label: "히어로 배경 사진 (가로 1920 이상 권장)", type: "upload", relationTo: "media" },
             { name: "heroTitle", label: "히어로 제목", type: "text" },
             { name: "heroText", label: "히어로 문구", type: "textarea" },
             { name: "searchPlaceholder", label: "검색창 안내 문구", type: "text" },

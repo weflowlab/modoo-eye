@@ -68,6 +68,7 @@ export type ClinicInfo = {
 
 // 메인 페이지 편집 가능 콘텐츠 (Payload 'home' 글로벌)
 export type HomeContent = {
+  heroImage?: ImageRef | null; // 히어로 배경 사진
   heroTitle: string;
   heroText: string;
   searchPlaceholder: string;
