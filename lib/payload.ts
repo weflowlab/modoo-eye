@@ -9,6 +9,7 @@ import config from "@payload-config";
 import type { Category as PCategory, Doctor as PDoctor, Media, Post as PPost } from "@/payload-types";
 import type { Category, ClinicInfo, Doctor, HomeContent, ImageRef, Post, SiteData } from "./types";
 import { clinic as fallbackClinic, categories as fallbackCategories, popularKeywords as fallbackKeywords } from "./mock";
+import { mediaUrl } from "./mediaUrl";
 
 const getClient = () => getPayload({ config });
 
@@ -25,7 +26,7 @@ async function isDraft(): Promise<boolean> {
 
 function mapImage(m: Media | number | null | undefined): ImageRef | null {
   if (!m || typeof m !== "object" || !m.url) return null;
-  return { url: m.url, alt: m.alt ?? "", width: m.width ?? undefined, height: m.height ?? undefined };
+  return { url: mediaUrl(m.url), alt: m.alt ?? "", width: m.width ?? undefined, height: m.height ?? undefined };
 }
 
 function mapCategory(c: PCategory): Category {

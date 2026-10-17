@@ -36,7 +36,9 @@ export function Reveal({
 
   // 뷰포트 진입 감지 (한 번만 재생)
   useEffect(() => {
-    const el = ref.current;
+    // "up" 은 inner 가 overflow-hidden 래퍼 밖(아래)으로 밀려나 있어 교차 영역이 0 이다.
+    // 그래서 래퍼(부모)를 관찰해야 화면 진입을 감지할 수 있다.
+    const el = variant === "up" ? ref.current?.parentElement : ref.current;
     if (!el) return;
     // 구형 브라우저(IntersectionObserver 없음)는 다음 프레임에 바로 표시
     if (typeof IntersectionObserver === "undefined") {
@@ -54,7 +56,7 @@ export function Reveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [variant]);
 
   const Tag = as;
   const style: CSSProperties = {

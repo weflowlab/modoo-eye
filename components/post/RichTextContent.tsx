@@ -6,6 +6,7 @@ import { RichText, type JSXConvertersFunction } from "@payloadcms/richtext-lexic
 import type { DefaultNodeTypes, SerializedUploadNode, SerializedHeadingNode } from "@payloadcms/richtext-lexical";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 import { extractHeadings, type LexicalNode } from "@/lib/lexical";
+import { mediaUrl } from "@/lib/mediaUrl";
 
 type Props = { content: unknown; className?: string };
 
@@ -32,7 +33,7 @@ export function RichTextContent({ content, className }: Props) {
       const caption = (n.fields as { caption?: string } | undefined)?.caption;
       const img = (
         <Image
-          src={m.url}
+          src={mediaUrl(m.url)}
           alt={m.alt ?? ""}
           width={m.width ?? 1200}
           height={m.height ?? 800}
