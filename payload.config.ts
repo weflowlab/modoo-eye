@@ -49,6 +49,14 @@ export default buildConfig({
   collections: [Posts, Categories, Doctors, Media, Users],
   globals: [Clinic, HomePage],
   editor: lexicalEditor(),
+  // 이메일 발송은 쓰지 않는다 (비밀번호 변경은 관리자 계정 메뉴에서, 분실 시 개발자가 재설정).
+  // 어댑터를 비워 두면 매 요청마다 경고가 찍히므로 아무것도 보내지 않는 어댑터를 둔다.
+  email: () => ({
+    name: "none",
+    defaultFromAddress: "noreply@modooeye.kr",
+    defaultFromName: "모두의안과 블로그",
+    sendEmail: async () => undefined,
+  }),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   db: sqliteAdapter({
