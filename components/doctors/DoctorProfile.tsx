@@ -2,6 +2,7 @@
 // 모바일에서는 본문 위에 전체 폭, lg 이상에서는 왼쪽 25rem 고정폭 sticky.
 import type { Doctor } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 import { Badge } from "@/components/ui/Badge";
 import { DoctorSectionNav, type SectionNavItem } from "./DoctorSectionNav";
 
@@ -13,7 +14,13 @@ export function DoctorProfile({ doctor, sections }: Props) {
     <aside className="w-full lg:w-100 lg:shrink-0 lg:sticky lg:top-24 lg:self-start">
       {/* 프로필 사진 (레퍼런스: padding-bottom 125% = 4:5) */}
       <div className="relative w-full overflow-hidden rounded-[4px] bg-muted">
-        <Placeholder label={`${doctor.name} 프로필`} className="aspect-[4/5] w-full" />
+        {doctor.photo ? (
+          <div className="relative aspect-[4/5] w-full">
+            <MediaImage image={doctor.photo} sizes="(min-width: 1024px) 400px, 100vw" priority />
+          </div>
+        ) : (
+          <Placeholder label={`${doctor.name} 프로필`} className="aspect-[4/5] w-full" />
+        )}
       </div>
 
       {/* 이름 + 직함 + 배지 */}

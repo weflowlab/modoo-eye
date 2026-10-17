@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconSearch, IconX } from "@tabler/icons-react";
+import { useSite } from "@/components/SiteProvider";
 
 type Props = {
   query: string; // URL 의 q
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function SearchHero({ query, keywords, resultCount }: Props) {
+  const { clinic } = useSite();
   const router = useRouter();
   // 입력값 상태 (URL 의 q 로 초기화)
   const [value, setValue] = useState(query);
@@ -43,7 +45,7 @@ export function SearchHero({ query, keywords, resultCount }: Props) {
                 name="q"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="검색어를 입력하세요"
+                placeholder={`${clinic.name} 의료진에게 물어보세요`}
                 aria-label="콘텐츠 검색"
                 className="h-8 w-full flex-1 bg-transparent text-center text-base font-semibold text-neutral-800 outline-none placeholder:font-normal placeholder:text-neutral-300 md:h-10 md:text-lg lg:text-2xl"
               />
@@ -69,7 +71,7 @@ export function SearchHero({ query, keywords, resultCount }: Props) {
             </div>
           </form>
 
-          {/* 인기 키워드: 클릭 시 해당 키워드로 검색 */}
+          {/* 인기 키워드: 클릭 시 해당 키워드로 검색. 칩은 흰 바탕 + 남색 글씨 (반투명 흰 칩은 밝은 쪽 그라데이션에서 AA 미달) */}
           <div className="mt-5 flex flex-col items-center justify-center gap-y-2 md:mt-6 md:flex-row md:flex-wrap md:gap-x-4 md:gap-y-2 lg:mt-8">
             <p className="text-sm font-semibold text-white md:text-base lg:text-lg">인기 키워드 :</p>
             <ul className="flex flex-wrap items-center justify-center gap-2">
@@ -81,7 +83,7 @@ export function SearchHero({ query, keywords, resultCount }: Props) {
                       setValue(k);
                       go(k);
                     }}
-                    className="rounded-[4px] bg-white/20 px-3 py-1 text-sm font-medium text-white shadow-[0px_4px_10px_0px_var(--brand-primary-5)] transition-colors hover:bg-white/30 md:px-5 md:py-1.5 md:text-base"
+                    className="rounded-[4px] bg-white px-3 py-1 text-sm font-medium text-brand-primary shadow-[0px_4px_10px_0px_var(--brand-primary-5)] transition-colors hover:bg-white/85 md:px-5 md:py-1.5 md:text-base"
                   >
                     {k}
                   </button>

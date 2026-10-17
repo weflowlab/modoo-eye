@@ -2,8 +2,9 @@
 // 화면 우하단 고정 "퀵메뉴" 버튼 + 드로어. 레퍼런스 QuickMenuCTA 를 옮김.
 // 드로어는 데스크톱(md+) 오른쪽 사이드, 모바일 바텀시트. app/layout.tsx 의 <SiteFooter /> 뒤에 넣는다.
 import { useState, useSyncExternalStore } from "react";
-import { IconArrowUp, IconCalendarEvent, IconHome, IconLetterN, IconMessageCircle, IconPhone, IconX } from "@tabler/icons-react";
-import { clinic } from "@/lib/mock";
+import { IconArrowUp, IconBrandKakaoTalk, IconHome, IconMessageCircle, IconPhone, IconX } from "@tabler/icons-react";
+import { useSite } from "@/components/SiteProvider";
+import type { ClinicInfo } from "@/lib/types";
 import { Sheet } from "@/components/ui/Sheet";
 
 // md 이상이면 드로어를 오른쪽에서, 미만이면 아래에서 연다 (레퍼런스 matchMedia 768px)
@@ -18,15 +19,19 @@ const useIsDesktop = () => useSyncExternalStore(subscribe, () => window.matchMed
 // 레퍼런스 물결 링 3개 (scale/opacity 단계)
 const RIPPLES = ["scale-[1.13] opacity-30", "scale-[1.27] opacity-15", "scale-[1.4] opacity-10"];
 
-// 액션 버튼. 예약 URL 은 mock 에 없어 "#" 상수. 카톡 상담은 clinic.consultUrl.
-const ACTIONS = [
-  { key: "phone", label: "대표전화", href: `tel:${clinic.phone.replace(/[^0-9+]/g, "")}`, Icon: IconPhone, color: "bg-[#485667] text-white", external: false },
-  { key: "reserve", label: "간편 예약", href: "#", Icon: IconCalendarEvent, color: "bg-[#485667] text-white", external: true },
-  { key: "naver", label: "네이버 예약", href: "#", Icon: IconLetterN, color: "bg-[#03c75a] text-white", external: true },
-  { key: "kakao", label: "카톡 상담", href: clinic.consultUrl, Icon: IconMessageCircle, color: "bg-[#ffe500] text-[#222222]", external: true },
-];
+// 액션 버튼 3개(전화 / 네이버 톡톡 / 카카오채널) + 아래 홈페이지 바로가기 = 4개.
+// 네이버 초록·카카오 노랑은 해당 서비스의 브랜드 색이라 그대로 두고, 전화는 병원 브랜드 색(primary).
+// 링크가 비어 있는 채널(예: 카카오채널 미설정)은 버튼을 숨긴다.
+const buildActions = (clinic: ClinicInfo) =>
+  [
+    { key: "phone", label: "대표전화", href: `tel:${clinic.phone.replace(/[^0-9+]/g, "")}`, Icon: IconPhone, color: "bg-primary text-primary-foreground", external: false },
+    { key: "naver", label: "네이버 톡톡", href: clinic.consultUrl, Icon: IconMessageCircle, color: "bg-[#03c75a] text-white", external: true },
+    { key: "kakao", label: "카카오채널", href: clinic.kakaoChannelUrl, Icon: IconBrandKakaoTalk, color: "bg-[#ffe500] text-neutral-900", external: true },
+  ].filter((a) => a.href && a.href !== "tel:");
 
 export function FloatingCta() {
+  const { clinic } = useSite();
+  const ACTIONS = buildActions(clinic);
   const [open, setOpen] = useState(false);
   const isDesktop = useIsDesktop();
   const close = () => setOpen(false);
@@ -82,7 +87,10 @@ export function FloatingCta() {
           <div className="flex flex-col gap-5 md:gap-10">
             <div className="flex gap-8 md:gap-10">
               <span className={labelCls}>오시는 길</span>
-              <p className="whitespace-pre-line text-sm leading-[1.4] text-neutral-800 md:text-[22px]">{clinic.address}</p>
+              <div className="text-sm leading-[1.4] text-neutral-800 md:text-[22px]">
+                <p>{clinic.address}</p>
+                <p className="mt-1 text-xs text-neutral-500 md:text-base">{clinic.directions}</p>
+              </div>
             </div>
             <div className="h-px w-full bg-neutral-300" />
             <div className="flex gap-8 md:gap-10">
@@ -103,7 +111,7 @@ export function FloatingCta() {
             </div>
           </div>
 
-          {/* 액션 버튼 4개 + 홈페이지 바로가기 */}
+          {/* 액션 버튼 3개 + 홈페이지 바로가기 */}
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
               {ACTIONS.map(({ key, label, href, Icon, color, external }) => (

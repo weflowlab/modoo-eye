@@ -42,3 +42,9 @@ next-env.d.ts
 
 # claude code local settings
 .claude/settings.local.json
+
+# payload
+.env
+*.db
+*.db-journal
+public/media/

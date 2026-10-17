@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 
 type Props = {
   post: Post;
@@ -55,12 +56,16 @@ export function PostCard({ post, rank, showSummary = false, className = "" }: Pr
   );
 }
 
-// 정사각 썸네일 (레퍼런스: aspect-ratio 래퍼 padding-bottom:100% + overflow-hidden)
+// 정사각 썸네일 (레퍼런스: aspect-ratio 래퍼 padding-bottom:100% + overflow-hidden). 썸네일이 있으면 이미지, 없으면 Placeholder.
 function Thumb({ post, rounded, hover }: { post: Post; rounded: string; hover: string }) {
   return (
     <div className="relative w-full pb-[100%]">
       <div className={`absolute inset-0 overflow-hidden bg-muted ${rounded}`}>
-        <Placeholder label={`썸네일 · ${post.title}`} className={`h-full w-full ${hover}`} />
+        {post.thumbnail ? (
+          <MediaImage image={post.thumbnail} sizes="(min-width: 1024px) 320px, (min-width: 768px) 50vw, 100vw" className={hover} />
+        ) : (
+          <Placeholder label={`썸네일 · ${post.title}`} className={`h-full w-full ${hover}`} />
+        )}
       </div>
     </div>
   );

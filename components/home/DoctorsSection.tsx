@@ -7,9 +7,16 @@ import { IconArrowRight } from "@tabler/icons-react";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { DoctorCard } from "@/components/doctors/DoctorCard";
-import { clinic, doctors } from "@/lib/mock";
+import { useSite } from "@/components/SiteProvider";
+import type { Doctor } from "@/lib/types";
 
-export function DoctorsSection() {
+type Props = { doctors: Doctor[] };
+
+export function DoctorsSection({ doctors }: Props) {
+  const { clinic } = useSite();
+  // 등록된 의료진이 없으면 섹션 자체를 숨긴다
+  if (doctors.length === 0) return null;
+
   return (
     <section className="py-15 md:py-30 overflow-hidden">
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl">
@@ -23,7 +30,9 @@ export function DoctorsSection() {
                 </h2>
               </Reveal>
               <Reveal variant="up" delay={0.1}>
-                <p className="mt-4 text-sm text-neutral-600 md:text-xl">환자의 눈높이에 맞춰 좋은 결과를 선물합니다.</p>
+                <p className="mt-4 text-sm text-neutral-600 md:text-xl">
+                  대학병원 교수 출신 의료진이 망막·녹내장·백내장·외안부·성형안과를 분야별로 나누어 직접 진료합니다.
+                </p>
               </Reveal>
               <div className="mt-6">
                 <Reveal variant="fade-up" delay={0.2}>

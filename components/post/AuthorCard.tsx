@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Doctor } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 
 type Props = { doctor: Doctor; className?: string };
 
@@ -14,7 +15,13 @@ export function AuthorCard({ doctor, className = "" }: Props) {
     >
       {/* 레퍼런스: w-54(13.5rem) 정사각, rounded-sm, 회색 바탕 */}
       <div className="relative w-54 shrink-0">
-        <Placeholder label={`${doctor.name} 프로필`} className="aspect-square w-full rounded-sm bg-neutral-300" />
+        {doctor.photo ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-neutral-300">
+            <MediaImage image={doctor.photo} sizes="216px" />
+          </div>
+        ) : (
+          <Placeholder label={`${doctor.name} 프로필`} className="aspect-square w-full rounded-sm bg-neutral-300" />
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-xl font-bold text-foreground">

@@ -1,41 +1,43 @@
-// About 페이지 소개 본문. 리치텍스트(prose-content) 스타일로 h3 + 문단 나열. 문구는 플레이스홀더.
-import { clinic } from "@/lib/mock";
+// About 페이지 소개 본문. 리치텍스트(prose-content) 스타일로 h3 + 문단 나열.
+// 문구는 홈페이지(modooeye.kr) 핵심 메시지 기준, 사실 위주 (과장 표현 금지).
+import { getClinic } from "@/lib/payload";
 
-export function AboutIntro() {
+export async function AboutIntro() {
+  const clinic = await getClinic();
   return (
     // 레퍼런스: prose-content 안에 h3(strong) + 빈 줄로 띄운 p 들
     <div className="prose-content">
       <h3>
-        <strong>{clinic.name} 소개 제목 플레이스홀더입니다.</strong>
+        <strong>분야별 전문의가 함께 진료하는 {clinic.name}입니다.</strong>
       </h3>
       <p></p>
       <p>
         <br />
-        소개 문구 플레이스홀더 1. 진료 철학을 한두 문장으로 설명합니다.
+        {clinic.name}({clinic.nameEn})는 대전 둔산동에 있는 안과로,
         <br />
-        환자의 눈 상태를 정밀하게 분석해 맞춤형 진료 방향을 제안합니다.
+        망막·녹내장·백내장·외안부·성형안과 질환의 풍부한 임상경험을 가진 분야별 전문의가 직접 진료합니다.
       </p>
       <p>
         <br />
-        <strong>주요 진료 분야 플레이스홀더</strong>를 전문적으로 진료하며,
+        <strong>대학병원 교수 출신 의료진</strong>이 각자의 전문 분야를 나누어 맡고,
         <br />
-        일상 속 눈 건강도 함께 살핍니다.
+        여러 질환이 함께 있는 경우에도 한곳에서 협진합니다.
       </p>
       <p>
         <br />
-        검사·수술 장비와 진단 데이터 설명 플레이스홀더.
+        검사부터 진단, 수술, 수술 후 관리까지 이어지는 <strong>원스톱 진료시스템</strong>으로
         <br />
-        <strong>환자의 눈에 필요한 치료를 선택</strong>한다는 원칙을 강조합니다.
+        환자의 눈 상태에 맞는 치료 방향을 안내합니다.
       </p>
       <p>
         <br />
-        진료와 수술 이후 관리 프로그램 설명 플레이스홀더.
+        {clinic.stats.map((s) => `${s.label} ${s.value}`).join(", ")} ({clinic.statsNote})의 수술 경험을 바탕으로
+        <br />
+        검사 결과를 충분히 설명하고 환자가 이해한 뒤 치료를 결정할 수 있도록 돕습니다.
       </p>
       <p>
         <br />
-        마무리 문구 플레이스홀더.
-        <br />
-        <strong>끊임없는 연구와 전문적인 치료로 신뢰할 수 있는 결과를 만들어가겠습니다.</strong>
+        <strong>환자의 눈에 필요한 치료를 정확히 선택한다</strong>는 원칙으로 진료하겠습니다.
       </p>
     </div>
   );

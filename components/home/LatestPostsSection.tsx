@@ -8,14 +8,15 @@ import "swiper/css";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { PostCard } from "@/components/posts/PostCard";
-import { getLatestPosts } from "@/lib/mock";
+import type { Post } from "@/lib/types";
 
 // 레퍼런스: size-12 원형 회색 버튼, 끝에 도달하면 disabled
 const navButtonClass =
   "inline-flex shrink-0 items-center justify-center size-12 rounded-full bg-neutral-100 text-foreground transition-all outline-none select-none hover:bg-muted active:translate-y-px disabled:pointer-events-none disabled:opacity-50";
 
-export function LatestPostsSection() {
-  const posts = getLatestPosts(6);
+type Props = { posts: Post[] }; // 최신순 글 (서버 페이지가 getLatestPosts(6) 로 넘김)
+
+export function LatestPostsSection({ posts }: Props) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -25,6 +26,9 @@ export function LatestPostsSection() {
     setIsBeginning(s.isBeginning);
     setIsEnd(s.isEnd);
   };
+
+  // 글이 없으면 섹션 자체를 숨긴다
+  if (posts.length === 0) return null;
 
   return (
     <section className="py-15 md:py-30 overflow-hidden">

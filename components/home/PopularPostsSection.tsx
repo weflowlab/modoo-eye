@@ -7,10 +7,13 @@ import { IconArrowRight } from "@tabler/icons-react";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { PostCard } from "@/components/posts/PostCard";
-import { getPopularPosts } from "@/lib/mock";
+import type { Post } from "@/lib/types";
 
-export function PopularPostsSection() {
-  const posts = getPopularPosts(4);
+type Props = { posts: Post[] }; // 조회수순 상위 글 (서버 페이지가 getPopularPosts(4) 로 넘김)
+
+export function PopularPostsSection({ posts }: Props) {
+  // 글이 없으면 섹션 자체를 숨긴다
+  if (posts.length === 0) return null;
 
   return (
     <section className="py-15 md:py-30 overflow-hidden">

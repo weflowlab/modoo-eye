@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 
 type Props = {
   post: Post;
@@ -20,10 +21,18 @@ export function PostListItem({ post, highlight, className = "" }: Props) {
       <div className="w-full shrink-0 sm:w-[200px] md:w-[300px]">
         <div className="relative w-full pb-[100%]">
           <div className="absolute inset-0 overflow-hidden rounded-[4px] bg-neutral-200">
-            <Placeholder
-              label={`썸네일 · ${post.title}`}
-              className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]"
-            />
+            {post.thumbnail ? (
+              <MediaImage
+                image={post.thumbnail}
+                sizes="(min-width: 768px) 300px, (min-width: 640px) 200px, 100vw"
+                className="transition-transform duration-300 group-hover:scale-[1.03]"
+              />
+            ) : (
+              <Placeholder
+                label={`썸네일 · ${post.title}`}
+                className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]"
+              />
+            )}
           </div>
         </div>
       </div>

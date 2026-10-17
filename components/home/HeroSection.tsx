@@ -1,6 +1,6 @@
 "use client";
 // 메인 페이지 히어로. 그라데이션 배경 + 펄스 링 + 떠다니는 아이콘 + 제목/문구 + 검색창 + 인기 키워드.
-// 레퍼런스: blog.kimsretina.com 첫 번째 <section>
+// 레퍼런스 블로그의 첫 번째 <section> 구조를 따른다.
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +10,17 @@ import {
   IconSearch,
   IconStethoscope,
 } from "@tabler/icons-react";
-import { clinic, popularKeywords } from "@/lib/mock";
+import { useSite } from "@/components/SiteProvider";
+
+// 기본 문구 (Payload 'home' 글로벌이 비어 있을 때)
+const DEFAULT_TEXT =
+  "망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 직접 집필한 안과 정보에서 궁금한 점의 해답을 찾아보세요.";
+
+type Props = {
+  title?: string; // HomeContent.heroTitle
+  text?: string; // HomeContent.heroText
+  placeholder?: string; // HomeContent.searchPlaceholder
+};
 
 // 떠다니는 아이콘 4개의 위치/지연. 레퍼런스: animate-icon-enter + animate-float-y
 const floatingIcons = [
@@ -20,9 +30,14 @@ const floatingIcons = [
   { Icon: IconStethoscope, pos: "bottom-[18%] right-[10%] md:bottom-[28%] md:right-[14%]", enter: "0.6s", float: "-2.1s" },
 ];
 
-export function HeroSection() {
+export function HeroSection({ title, text, placeholder }: Props) {
+  const { clinic, popularKeywords } = useSite();
   const router = useRouter();
   const [query, setQuery] = useState("");
+
+  const heroTitle = title || `${clinic.name} 맞춤형 안과 지식 가이드`;
+  const heroText = text || DEFAULT_TEXT;
+  const searchPlaceholder = placeholder || `${clinic.name} 의료진에게 물어보세요`;
 
   // 검색: /search?q= 로 이동. 키워드 칩 클릭도 같은 경로.
   const goSearch = (q: string) => {
@@ -75,16 +90,12 @@ export function HeroSection() {
             {/* 레퍼런스: overflow-hidden + animate-reveal-up, 제목 0s / 문구 0.25s */}
             <div className="overflow-hidden">
               <div className="animate-reveal-up" style={{ animationDelay: "0s", animationDuration: "0.6s" }}>
-                <h1 className="font-bold text-neutral-900 text-2xl md:text-3xl lg:text-5xl xl:text-6xl">
-                  {clinic.name} 맞춤형 안과 지식 가이드
-                </h1>
+                <h1 className="font-bold text-neutral-900 text-2xl md:text-3xl lg:text-5xl xl:text-6xl">{heroTitle}</h1>
               </div>
             </div>
             <div className="overflow-hidden mt-6">
               <div className="animate-reveal-up" style={{ animationDelay: "0.25s", animationDuration: "0.6s" }}>
-                <p className="text-base text-neutral-700 lg:text-xl">
-                  {clinic.name} 의료진이 직접 집필한 신뢰도 높은 의학 정보에서 해답을 찾아드립니다.
-                </p>
+                <p className="text-base text-neutral-700 lg:text-xl">{heroText}</p>
               </div>
             </div>
           </div>
@@ -100,7 +111,7 @@ export function HeroSection() {
                       name="q"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder={`${clinic.name} 의료진에게 물어보세요`}
+                      placeholder={searchPlaceholder}
                       aria-label="콘텐츠 검색"
                       className="h-14 lg:h-20 w-full rounded-full bg-white pl-8 pr-18 lg:pr-26 lg:pl-10 text-lg lg:text-xl text-center outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 placeholder:text-neutral-300"
                     />
@@ -117,7 +128,8 @@ export function HeroSection() {
             </form>
           </div>
 
-          {/* 인기 키워드 박스. 레퍼런스: animate-fade-slide-up 1s 지연 */}
+          {/* 인기 키워드 박스. 레퍼런스: animate-fade-slide-up 1s 지연. 키워드가 없으면 숨김 */}
+          {popularKeywords.length > 0 && (
           <div
             className="animate-fade-slide-up mx-auto mt-5 flex flex-col md:flex-row flex-wrap justify-center items-start md:items-center gap-y-4 gap-x-15 bg-white/30 w-full md:w-fit max-w-800 shadow-[0_4px_20px_0_var(--brand-primary-20)] pl-10 pr-6 py-5 rounded-[16px] border-2 border-white"
             style={{ animationDelay: "1s", animationDuration: "0.6s" }}
@@ -136,6 +148,7 @@ export function HeroSection() {
               ))}
             </div>
           </div>
+          )}
         </div>
       </div>
     </section>

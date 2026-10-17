@@ -2,17 +2,18 @@
 // 사이트 헤더. 레퍼런스 2단 구조: (1) 상단 브랜드 띠(로고 + 전체 메뉴 햄버거), (2) sticky 흰 띠(로고, 홈페이지 바로가기, 메뉴, 검색).
 // 검색 열림 상태가 두 띠에 걸쳐 공유되므로 전체를 client 로 둔다.
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { IconArrowRight, IconMenu2, IconSearch, IconX } from "@tabler/icons-react";
-import { categories, clinic } from "@/lib/mock";
+import { useSite } from "@/components/SiteProvider";
 import { Container } from "@/components/ui/Container";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { SearchBox } from "@/components/layout/SearchBox";
 import { FullMenuSheet, MobileMenu, type NavItem } from "@/components/layout/MobileMenu";
 
 export function SiteHeader() {
+  const { clinic, categories } = useSite();
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 흰 띠 햄버거 (모바일 내비)
@@ -68,9 +69,15 @@ export function SiteHeader() {
       {/* ── (1) 상단 브랜드 띠 ── 레퍼런스: h-12 lg:h-20, bg-primary */}
       <div className={`relative z-30 text-primary-foreground ${topGradient ? "bg-linear-to-r from-brand-secondary to-brand-primary" : "bg-primary"}`}>
         <Container size="4xl" className="flex h-12 items-center justify-between lg:h-20">
-          <a href={clinic.homepageUrl} target="_blank" rel="noopener noreferrer" className="text-base font-bold">
-            {/* 레퍼런스: 로고 w-28 h-7 lg:h-11 lg:w-44 */}
-            <Placeholder label="병원 로고" className="h-7 w-28 rounded-2xs text-xs lg:h-11 lg:w-44" />
+          {/* 남색 띠 위에는 남색 로고가 안 보이므로 흰 알약(pill) 안에 넣는다. 레퍼런스 로고 높이(h-7 / lg:h-11)를 알약 높이로 유지 */}
+          <a
+            href={clinic.homepageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${clinic.name} 홈페이지`}
+            className="flex h-7 items-center rounded-full bg-white px-3 shadow-[0_2px_8px_0_rgba(0,0,0,0.12)] transition-opacity hover:opacity-90 lg:h-11 lg:px-5"
+          >
+            <Image src="/logo.png" alt={clinic.name} width={181} height={56} loading="eager" className="h-4 w-auto lg:h-7" />
           </a>
           <button
             type="button"
@@ -92,9 +99,9 @@ export function SiteHeader() {
           <Container size="4xl" className="flex h-16 items-center justify-between gap-3 md:gap-8 lg:h-20">
             {/* 왼쪽: 블로그 로고 + 홈페이지 바로가기 */}
             <div className="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-6">
-              <Link href="/" aria-label="웹블로그 홈으로 이동" className="relative shrink-0 text-current">
-                {/* 레퍼런스: w-28 h-9 lg:w-44 lg:h-14 */}
-                <Placeholder label="블로그 로고" className="h-9 w-28 rounded-2xs text-xs lg:h-14 lg:w-44" />
+              <Link href="/" aria-label="웹블로그 홈으로 이동" className="relative flex shrink-0 items-center text-current">
+                {/* 레퍼런스 로고 박스 w-28 h-9 / lg:w-44 lg:h-14 안에 들어가는 높이로 (181×56 비율) */}
+                <Image src="/logo.png" alt={`${clinic.name} 블로그`} width={181} height={56} loading="eager" className="h-8 w-auto lg:h-12" />
               </Link>
               <a
                 href={clinic.homepageUrl}

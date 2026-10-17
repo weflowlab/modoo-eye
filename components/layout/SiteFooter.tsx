@@ -1,15 +1,14 @@
-// 사이트 푸터. 오시는 길(지도 링크 3개), 진료시간, 대표전화 + 채널, 법적 링크 + 저작권. 데이터는 @/lib/mock 의 clinic.
-import { IconArticle, IconBrandInstagram, IconBrandYoutube, IconMapPin } from "@tabler/icons-react";
-import { clinic } from "@/lib/mock";
+// 사이트 푸터. 오시는 길(지도 링크 3개), 진료시간, 대표전화 + 채널, 법적 링크 + 사업자 정보 + 저작권. 데이터는 Payload 병원 정보(getClinic).
+import Image from "next/image";
+import { IconBrandKakaoTalk, IconMapPin, IconMessageCircle } from "@tabler/icons-react";
+import { getClinic } from "@/lib/payload";
 import { Container } from "@/components/ui/Container";
 
-// 레퍼런스 진료시간 아래 회색 안내문(수술시간 등). mock 에 필드가 없어 상수로 대체.
-const HOURS_NOTES = ["안내 문구 플레이스홀더 1", "안내 문구 플레이스홀더 2"];
+// 채널 아이콘: 라벨에 "카카오" 가 들어가면 카카오톡 아이콘, 그 외(네이버 톡톡 등)는 말풍선
+const snsIcon = (label: string) => (label.includes("카카오") ? IconBrandKakaoTalk : IconMessageCircle);
 
-// 채널 아이콘 (레퍼런스는 svg 이미지 → tabler 아이콘으로 대체)
-const SNS_ICONS = [IconBrandYoutube, IconArticle, IconBrandInstagram];
-
-export function SiteFooter() {
+export async function SiteFooter() {
+  const clinic = await getClinic();
   return (
     // 레퍼런스: mt-10 md:mt-24 bg-neutral-800 text-white
     <footer className="mt-10 bg-neutral-800 text-white md:mt-24">
@@ -18,7 +17,9 @@ export function SiteFooter() {
         {/* 오시는 길 */}
         <div className="w-auto max-w-120">
           <div className="mb-5 text-sm font-semibold text-white md:text-base">오시는 길</div>
-          <p className="mb-4 text-base leading-relaxed md:mb-5 md:text-lg">{clinic.address}</p>
+          <p className="mb-2 text-base leading-relaxed md:text-lg">{clinic.address}</p>
+          <p className="mb-1 text-base text-neutral-400 md:text-lg">{clinic.directions}</p>
+          <p className="mb-4 text-base text-neutral-400 md:mb-5 md:text-lg">주차: {clinic.parking.join(" · ")}</p>
           <div className="flex flex-wrap gap-2">
             {clinic.mapLinks.map((m) => (
               // 레퍼런스: w-30 h-11 md:w-38 md:h-12.5 rounded-md bg-neutral-700 hover:bg-neutral-600
@@ -47,23 +48,17 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-          <div className="mt-5">
-            {HOURS_NOTES.map((n) => (
-              <p key={n} className="text-base text-neutral-400 md:text-lg">
-                {n}
-              </p>
-            ))}
-          </div>
         </div>
 
         {/* 대표전화 + 채널 */}
         <div className="w-auto max-w-120">
           <div className="mb-5 text-sm font-semibold text-white md:text-base">대표전화</div>
           <p className="text-2xl font-bold text-white md:text-3xl">{clinic.phone}</p>
-          <div className="mb-3 mt-6 text-base text-neutral-400">채널</div>
+          <p className="mt-1 text-base text-neutral-400 md:text-lg">팩스 {clinic.fax}</p>
+          <div className="mb-3 mt-6 text-base text-neutral-400">상담 채널</div>
           <div className="flex gap-2">
-            {clinic.sns.map((s, i) => {
-              const Icon = SNS_ICONS[i] ?? IconArticle;
+            {clinic.sns.map((s) => {
+              const Icon = snsIcon(s.label);
               return (
                 <a
                   key={s.label}
@@ -81,13 +76,22 @@ export function SiteFooter() {
         </div>
       </Container>
 
-      {/* 하단: 법적 링크 + 저작권. 모바일 세로 중앙, md 이상 양끝 정렬 */}
+      {/* 하단: 로고 + 사업자 정보 / 법적 링크 + 저작권. 모바일 세로 중앙, md 이상 양끝 정렬 */}
       <div className="border-t border-neutral-700">
         <Container
           size="4xl"
-          className="flex flex-col items-center gap-x-2 gap-y-4 py-5 text-base text-neutral-400 md:flex-row md:items-center md:justify-between md:py-7 md:text-lg"
+          className="flex flex-col items-center gap-x-6 gap-y-4 py-5 text-base text-neutral-400 md:flex-row md:items-center md:justify-between md:py-7 md:text-lg"
         >
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 font-medium md:gap-x-7">
+          {/* 어두운 배경이라 남색 로고는 흰 알약 안에 */}
+          <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-5">
+            <span className="inline-flex h-9 shrink-0 items-center rounded-full bg-white px-4">
+              <Image src="/logo.png" alt={clinic.name} width={181} height={56} className="h-5 w-auto" />
+            </span>
+            <p className="text-center text-sm leading-relaxed md:text-left md:text-base">
+              {clinic.name} ({clinic.nameEn}) · 대표 {clinic.representatives.join("·")} · 사업자등록번호 {clinic.businessNumber}
+            </p>
+          </div>
+          <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium md:justify-end md:gap-x-7">
             {clinic.legalLinks.map((l) => (
               // 레퍼런스: 항목 사이 세로 구분선(after), 마지막 항목은 숨김
               <li
@@ -99,8 +103,8 @@ export function SiteFooter() {
                 </a>
               </li>
             ))}
+            <li className="w-full text-center md:w-auto md:text-right">© 2026 {clinic.name}</li>
           </ul>
-          <p>© 2026 {clinic.name}</p>
         </Container>
       </div>
     </footer>

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import type { Doctor } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 
 type Props = { doctor: Doctor };
 
@@ -10,10 +11,20 @@ export function DoctorMiniCard({ doctor }: Props) {
     <Link href={`/doctors/${doctor.slug}`} className="group block">
       {/* 레퍼런스: 1:1 사진, hover 확대 */}
       <div className="relative w-full overflow-hidden rounded-[4px] bg-muted">
-        <Placeholder
-          label={`${doctor.name} 프로필`}
-          className="aspect-square w-full transition-transform duration-300 group-hover:scale-[1.05]"
-        />
+        {doctor.photo ? (
+          <div className="relative aspect-square w-full">
+            <MediaImage
+              image={doctor.photo}
+              sizes="(min-width: 768px) 33vw, 80vw"
+              className="transition-transform duration-300 group-hover:scale-[1.05]"
+            />
+          </div>
+        ) : (
+          <Placeholder
+            label={`${doctor.name} 프로필`}
+            className="aspect-square w-full transition-transform duration-300 group-hover:scale-[1.05]"
+          />
+        )}
       </div>
       <div className="mt-3 flex flex-col gap-1">
         <div className="flex items-baseline gap-2">

@@ -6,11 +6,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
+import Image from "next/image";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { useMounted } from "@/components/ui/useMounted";
+import type { ImageRef } from "@/lib/types";
 
-// 레퍼런스: 슬라이드 5장 (alt 문구를 자리표시 라벨로 사용)
-const SLIDES = [
+// 이미지가 없을 때 쓰는 자리표시 5장 (레퍼런스: 슬라이드 5장)
+const PLACEHOLDERS = [
   "본문 이미지 1 (진단과 치료 안내)",
   "본문 이미지 2 (유형 구분)",
   "본문 이미지 3 (정밀검사 안내)",
@@ -18,18 +20,37 @@ const SLIDES = [
   "본문 이미지 5 (정기검진·생활관리)",
 ];
 
-export function PostImageSlider() {
+type Props = { images?: ImageRef[] };
+
+// 슬라이드 한 장: 실제 이미지면 next/image, 아니면 Placeholder
+function Slide({ image, label }: { image?: ImageRef; label: string }) {
+  if (image) {
+    return (
+      <div className="relative aspect-square w-full overflow-hidden rounded-[12px] bg-muted">
+        <Image src={image.url} alt={image.alt || label} fill sizes="(min-width: 901px) 33vw, (min-width: 641px) 50vw, 100vw" className="object-cover" />
+      </div>
+    );
+  }
+  return <Placeholder label={label} className="aspect-square w-full rounded-[12px]" />;
+}
+
+export function PostImageSlider({ images = [] }: Props) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [index, setIndex] = useState(0);
   const [perView, setPerView] = useState(1);
   const mounted = useMounted();
+
+  // CMS 이미지가 있으면 그걸, 없으면 자리표시 5장
+  const SLIDES = images.length
+    ? images.map((img, i) => ({ key: `${img.url}-${i}`, image: img, label: img.alt || `본문 이미지 ${i + 1}` }))
+    : PLACEHOLDERS.map((label) => ({ key: label, image: undefined, label }));
 
   // 서버 프리렌더 중엔 자동재생 swiper 대신 첫 장만 정적으로 표시 (레이아웃 유지)
   if (!mounted) {
     return (
       <div className="relative mb-[30px]">
         <div className="overflow-hidden rounded-[14px]">
-          <Placeholder label={SLIDES[0]} className="aspect-square w-full rounded-[12px]" />
+          <Slide image={SLIDES[0].image} label={SLIDES[0].label} />
         </div>
       </div>
     );
@@ -66,9 +87,9 @@ export function PostImageSlider() {
           onSlideChange={(s) => setIndex(s.activeIndex)}
           className="w-full"
         >
-          {SLIDES.map((label) => (
-            <SwiperSlide key={label}>
-              <Placeholder label={label} className="aspect-square w-full rounded-[12px]" />
+          {SLIDES.map((s) => (
+            <SwiperSlide key={s.key}>
+              <Slide image={s.image} label={s.label} />
             </SwiperSlide>
           ))}
         </Swiper>

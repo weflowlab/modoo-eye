@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { IconSearch, IconX } from "@tabler/icons-react";
-import { clinic, popularKeywords } from "@/lib/mock";
+import { useSite } from "@/components/SiteProvider";
 import { Container } from "@/components/ui/Container";
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
 };
 
 export function SearchBox({ variant = "hero", showKeywords = false, onClose, autoFocus, className = "" }: Props) {
+  const { clinic, popularKeywords } = useSite();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState("");
@@ -86,7 +87,7 @@ export function SearchBox({ variant = "hero", showKeywords = false, onClose, aut
                 )}
               </div>
             </form>
-            {/* 인기 키워드 칩 (흰색 반투명) */}
+            {/* 인기 키워드 칩. 레퍼런스는 흰색 20% 반투명 + 흰 글씨였지만 밝은 쪽 그라데이션 위에서 대비 3.6:1 로 AA 미달 → 흰 바탕 + 남색 글씨 */}
             {showKeywords && popularKeywords.length > 0 && (
               <div className="mt-5 flex flex-col items-center justify-center gap-y-2 md:mt-6 md:flex-row md:flex-wrap md:gap-x-4 md:gap-y-2 lg:mt-8">
                 <p className="text-sm font-semibold text-white md:text-base lg:text-lg">인기 키워드 :</p>
@@ -96,7 +97,7 @@ export function SearchBox({ variant = "hero", showKeywords = false, onClose, aut
                       <button
                         type="button"
                         onClick={() => go(k)}
-                        className="rounded-[4px] bg-white/20 px-3 py-1 text-sm font-medium text-white shadow-[0px_4px_10px_0px_var(--brand-primary-5)] transition-colors hover:bg-white/30 md:px-5 md:py-1.5 md:text-base"
+                        className="rounded-[4px] bg-white px-3 py-1 text-sm font-medium text-brand-primary shadow-[0px_4px_10px_0px_var(--brand-primary-5)] transition-colors hover:bg-white/85 md:px-5 md:py-1.5 md:text-base"
                       >
                         {k}
                       </button>
@@ -111,7 +112,7 @@ export function SearchBox({ variant = "hero", showKeywords = false, onClose, aut
                 type="button"
                 onClick={onClose}
                 aria-label="검색 닫기"
-                className="mt-5 inline-flex items-center gap-1 text-xs font-medium text-white/80 transition-colors hover:text-white md:mt-6 md:text-sm lg:mt-8"
+                className="mt-5 inline-flex items-center gap-1 text-xs font-medium text-white underline-offset-4 transition-all hover:underline md:mt-6 md:text-sm lg:mt-8"
               >
                 닫기
                 <IconX className="size-3.5 md:size-4" stroke={2} />

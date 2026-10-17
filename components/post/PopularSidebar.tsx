@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 
 type Props = { posts: Post[]; className?: string };
 
@@ -21,7 +22,13 @@ export function PopularSidebar({ posts, className = "" }: Props) {
                 >
                   {/* 레퍼런스: w-17.5(70px) 원형 썸네일 */}
                   <div className="w-17.5 shrink-0">
-                    <Placeholder label="썸네일" className="aspect-square w-full rounded-full text-[10px]" />
+                    {p.thumbnail ? (
+                      <div className="relative aspect-square w-full overflow-hidden rounded-full bg-muted">
+                        <MediaImage image={p.thumbnail} sizes="70px" />
+                      </div>
+                    ) : (
+                      <Placeholder label="썸네일" className="aspect-square w-full rounded-full text-[10px]" />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-base font-medium leading-snug text-neutral-700">{p.title}</p>

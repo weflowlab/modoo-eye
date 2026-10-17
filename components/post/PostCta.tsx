@@ -1,13 +1,14 @@
 // 글 하단 CTA 다크 배너: 제목 + 안내 문구 + 주소/전화/진료시간 + 버튼 묶음. 면책 박스 아래에 배치.
 // 레퍼런스: 어두운 배경, 16px 모서리, 가운데 정렬, 버튼은 모바일에서 전체 폭.
 import { Button } from "@/components/ui/Button";
-import { clinic } from "@/lib/mock";
+import { getClinic } from "@/lib/payload";
 
 export const CTA_SECTION_ID = "cta";
 
 type Props = { className?: string };
 
-export function PostCta({ className = "" }: Props) {
+export async function PostCta({ className = "" }: Props) {
+  const clinic = await getClinic();
   const firstHours = clinic.hours[0];
   return (
     <div
@@ -17,12 +18,12 @@ export function PostCta({ className = "" }: Props) {
         id={CTA_SECTION_ID}
         className="mb-3 text-xl font-extrabold leading-[1.45] tracking-[-0.03em] text-white md:text-2xl"
       >
-        중심시력은 기다려 주지 않습니다
+        눈의 변화, 미루지 말고 확인하세요
       </h2>
       <p className="mb-[22px] text-[15.5px] leading-[1.75] text-neutral-400">
-        변화가 느껴졌다면 이미 진행이 시작된 신호일 수 있습니다.
+        작은 변화도 검사로 확인하면 치료 시기를 놓치지 않을 수 있습니다.
         <br />
-        {clinic.name}에서 정밀검사로 정확히 확인해 보세요.
+        {clinic.name} 분야별 전문의에게 네이버 톡톡으로 상담·예약하세요.
       </p>
 
       {/* 병원 기본 정보 한 줄 */}
@@ -36,10 +37,10 @@ export function PostCta({ className = "" }: Props) {
         )}
       </div>
 
-      {/* 버튼 묶음: 진료 안내 / 홈페이지 / 대표전화 */}
+      {/* 버튼 묶음: 네이버 톡톡 상담·예약(consultUrl) / 홈페이지 / 대표전화 */}
       <div className="flex flex-wrap justify-center gap-2.5">
         <Button variant="primary" size="lg" href={clinic.consultUrl} external className="w-full sm:w-auto">
-          진료 안내 보기
+          네이버 톡톡 상담·예약
         </Button>
         <Button
           variant="outline"

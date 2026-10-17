@@ -2,7 +2,8 @@
 // 헤더의 메뉴 드로어 2종. MobileMenu = 흰 헤더 햄버거(md 미만) 로 여는 바텀시트 내비.
 // FullMenuSheet = 상단 띠의 햄버거로 여는 전체 메뉴(외부 사이트맵 열 그리드).
 import Link from "next/link";
-import { clinic } from "@/lib/mock";
+import { useSite } from "@/components/SiteProvider";
+import type { SiteData } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
 import { Sheet } from "@/components/ui/Sheet";
 
@@ -34,22 +35,50 @@ export function MobileMenu({ open, onClose, items }: MenuProps) {
   );
 }
 
-// 전체 메뉴 열 데이터. 레퍼런스는 CMS 의 externalMenu(병원 홈페이지 사이트맵). mock 에 없어 상수로 대체.
-const FULL_MENU_COLUMNS = [
-  { id: "c1", label: "병원소개", groups: [{ id: "g1", label: "", items: ["인사말", "의료진", "둘러보기", "오시는 길"] }] },
-  { id: "c2", label: "진료안내", groups: [{ id: "g2", label: "", items: ["진료시간", "진료과목", "장비소개", "비급여 안내"] }] },
-  { id: "c3", label: "망막질환", groups: [{ id: "g3", label: "", items: ["당뇨망막병증", "황반변성", "망막박리", "망막혈관폐쇄"] }] },
-  { id: "c4", label: "백내장", groups: [{ id: "g4", label: "", items: ["백내장 수술", "노안 교정", "다초점 렌즈"] }] },
-  { id: "c5", label: "커뮤니티", groups: [{ id: "g5", label: "", items: ["공지사항", "이벤트", "온라인 상담"] }] },
-].map((c) => ({
-  ...c,
-  groups: c.groups.map((g) => ({ ...g, items: g.items.map((label, i) => ({ id: `${g.id}-${i}`, label, href: clinic.homepageUrl })) })),
-}));
+// 전체 메뉴 열 데이터. 홈페이지(modooeye.kr) 사이트맵(clinic.homepageMenu) + 상담 채널 + 블로그 카테고리 + 법적 안내.
+type MenuLink = { id: string; label: string; href: string; external: boolean };
+type MenuColumn = { id: string; label: string; items: MenuLink[] };
+
+const ext = (id: string, label: string, href: string): MenuLink => ({ id, label, href, external: true });
+
+// 사이트 데이터(병원 정보 + 카테고리)로 전체 메뉴 열을 만든다
+function buildFullMenuColumns({ clinic, categories }: SiteData): MenuColumn[] {
+  const menuOf = (label: string) => clinic.homepageMenu.find((m) => m.label === label);
+  const homeLinks = (labels: string[]) =>
+    labels.flatMap((l) => {
+      const m = menuOf(l);
+      return m ? [ext(`home-${l}`, m.label, m.href)] : [];
+    });
+
+  return [
+    { id: "c1", label: "병원소개", items: homeLinks(["병원소개", "의료진소개", "오시는 길"]) },
+    { id: "c2", label: "클리닉", items: homeLinks(["망막클리닉", "녹내장클리닉", "외안부클리닉", "성형안과클리닉", "노안/백내장클리닉"]) },
+    {
+      id: "c3",
+      label: "상담·예약",
+      items: [
+        ...homeLinks(["온라인상담"]),
+        ...clinic.sns.map((s) => ext(`sns-${s.label}`, s.label, s.href)),
+        { id: "tel", label: `대표전화 ${clinic.phone}`, href: `tel:${clinic.phone.replace(/[^0-9+]/g, "")}`, external: false },
+      ],
+    },
+    {
+      id: "c4",
+      label: "블로그",
+      items: [
+        { id: "blog-all", label: "전체 글", href: "/posts", external: false },
+        ...categories.map((c) => ({ id: `blog-${c.slug}`, label: c.name, href: `/${c.slug}`, external: false })),
+      ],
+    },
+    { id: "c5", label: "안내", items: clinic.legalLinks.map((l) => ext(`legal-${l.label}`, l.label, l.href)) },
+  ];
+}
 
 type FullProps = { open: boolean; onClose: () => void };
 
 // 전체 메뉴 시트. 레퍼런스: modal=false, side=bottom, 높이 calc(100dvh-상단띠), 2/3/5열 그리드, 항목 hover 시 점 + 들여쓰기
 export function FullMenuSheet({ open, onClose }: FullProps) {
+  const FULL_MENU_COLUMNS = buildFullMenuColumns(useSite());
   return (
     <Sheet
       open={open}
@@ -64,28 +93,35 @@ export function FullMenuSheet({ open, onClose }: FullProps) {
           {FULL_MENU_COLUMNS.map((col) => (
             <div key={col.id}>
               <div className="mb-4 text-lg font-bold text-neutral-800 md:mb-7 md:text-xl lg:text-2xl">{col.label}</div>
-              <div className="space-y-6">
-                {col.groups.map((g) => (
-                  <div key={g.id}>
-                    {g.label && <div className="mb-2 text-base font-bold text-neutral-800 md:mb-3 md:text-lg lg:text-xl">{g.label}</div>}
-                    <ul className="space-y-3">
-                      {g.items.map((item) => (
-                        <li key={item.id}>
-                          <a
-                            href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group relative text-sm text-neutral-600 transition-all duration-300 hover:pl-3 hover:text-primary md:text-base md:hover:pl-4 lg:text-lg"
-                          >
-                            <span className="absolute left-0 top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-primary opacity-0 transition-all duration-300 group-hover:opacity-100 md:h-1.5 md:w-1.5" />
-                            {item.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              <ul className="space-y-3">
+                {col.items.map((item) => {
+                  const cls =
+                    "group relative text-sm text-neutral-600 transition-all duration-300 hover:pl-3 hover:text-primary md:text-base md:hover:pl-4 lg:text-lg";
+                  const dot = (
+                    <span className="absolute left-0 top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-primary opacity-0 transition-all duration-300 group-hover:opacity-100 md:h-1.5 md:w-1.5" />
+                  );
+                  return (
+                    <li key={item.id}>
+                      {item.external ? (
+                        <a href={item.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                          {dot}
+                          {item.label}
+                        </a>
+                      ) : item.href.startsWith("/") ? (
+                        <Link href={item.href} onClick={onClose} className={cls}>
+                          {dot}
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <a href={item.href} className={cls}>
+                          {dot}
+                          {item.label}
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           ))}
         </div>

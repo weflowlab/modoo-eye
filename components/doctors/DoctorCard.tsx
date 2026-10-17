@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Doctor } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { MediaImage } from "@/components/ui/MediaImage";
 import { Badge } from "@/components/ui/Badge";
 
 type Props = { doctor: Doctor; className?: string };
@@ -12,10 +13,20 @@ export function DoctorCard({ doctor, className = "" }: Props) {
     <Link href={`/doctors/${doctor.slug}`} className={`group block ${className}`}>
       {/* 레퍼런스: 1:1 비율, rounded-[4px], hover 시 사진 1.05배 확대 */}
       <div className="relative w-full overflow-hidden rounded-[4px] bg-muted">
-        <Placeholder
-          label={`${doctor.name} 프로필`}
-          className="aspect-square w-full transition-transform duration-300 group-hover:scale-[1.05]"
-        />
+        {doctor.photo ? (
+          <div className="relative aspect-square w-full">
+            <MediaImage
+              image={doctor.photo}
+              sizes="(min-width: 1024px) 320px, 50vw"
+              className="transition-transform duration-300 group-hover:scale-[1.05]"
+            />
+          </div>
+        ) : (
+          <Placeholder
+            label={`${doctor.name} 프로필`}
+            className="aspect-square w-full transition-transform duration-300 group-hover:scale-[1.05]"
+          />
+        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
