@@ -11,6 +11,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { MediaImage } from "@/components/ui/MediaImage";
 import { Placeholder } from "@/components/ui/Placeholder";
 import type { Post } from "@/lib/types";
+import { formatDate } from "@/lib/formatDate";
 
 type Props = { posts: Post[] }; // 최신순 글 (서버 페이지가 getLatestPosts(8) 로 넘김)
 
@@ -29,13 +30,6 @@ function Photo({ post }: { post: Post }) {
   ) : (
     <Placeholder label={`썸네일 · ${post.title}`} className="size-full" />
   );
-}
-
-// "2026.10.17" 형식
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
 export function LatestPostsSection({ posts }: Props) {

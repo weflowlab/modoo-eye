@@ -8,7 +8,7 @@ export const clinic: ClinicInfo = {
   name: "모두의안과",
   nameEn: "MODOO'S EYE CLINIC",
   homepageUrl: HOME,
-  address: "대전광역시 서구 대덕대로 238, 3층 (둔산동)",
+  address: "대전광역시 서구 대덕대로 238, 3층(둔산동)",
   phone: "042-721-2211",
   fax: "042-721-2213",
   businessNumber: "505-96-79534",

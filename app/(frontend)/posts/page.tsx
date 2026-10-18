@@ -2,12 +2,10 @@
 // 탭은 각 주제 페이지(/slug)로 이동한다 (카테고리 페이지와 동일).
 import type { Metadata } from "next";
 import { getAllPosts, getCategories } from "@/lib/payload";
-import type { Post } from "@/lib/types";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PageTitle } from "@/components/posts/PageTitle";
 import { CategoryTabs } from "@/components/posts/CategoryTabs";
-import { PostListWithMore } from "@/components/posts/PostListWithMore";
-import { EmptyPosts } from "@/components/posts/EmptyPosts";
+import { PostBrowser } from "@/components/posts/PostBrowser";
 
 export const metadata: Metadata = {
   title: "전체 콘텐츠",
@@ -24,16 +22,9 @@ export default async function PostsPage() {
       <PageTitle title="전체 콘텐츠" />
 
       {/* 탭: 전체(현재) + 각 주제 페이지로 이동 (카테고리 페이지와 같은 동작) */}
-      <CategoryTabs basePath="/posts" categories={categories} mode="path" />
-      <div className="mt-10 md:mt-14">
-        <PostList posts={posts} />
-      </div>
+      {/* 탭(왼쪽) + 정렬 드롭박스(오른쪽) + 목록 */}
+      <PostBrowser posts={posts} tabs={<CategoryTabs basePath="/posts" categories={categories} mode="path" />} />
     </div>
   );
 }
 
-// 글이 없으면 빈 상태 문구
-function PostList({ posts }: { posts: Post[] }) {
-  if (posts.length === 0) return <EmptyPosts />;
-  return <PostListWithMore posts={posts} initialCount={8} step={8} />;
-}

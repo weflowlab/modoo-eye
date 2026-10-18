@@ -75,7 +75,7 @@ export function Sheet({ open, onClose, side = "bottom", modal = true, title, cla
   const sideCls =
     side === "bottom"
       ? `inset-x-0 bottom-0 h-auto ${visible ? "translate-y-0" : "translate-y-10"}`
-      : `inset-y-0 right-0 h-full ${visible ? "translate-x-0" : "translate-x-10"}`;
+      : `inset-y-0 right-0 h-full ${visible ? "translate-x-0" : "translate-x-full"}`;
 
   return createPortal(
     <>
@@ -92,7 +92,7 @@ export function Sheet({ open, onClose, side = "bottom", modal = true, title, cla
         aria-modal={modal}
         aria-label={title}
         data-side={side}
-        className={`fixed z-50 flex flex-col gap-4 bg-background text-sm text-foreground shadow-lg transition duration-200 ease-in-out ${visible ? "opacity-100" : "opacity-0"} ${sideCls} ${className}`}
+        className={`fixed z-50 flex flex-col gap-4 bg-background text-sm text-foreground shadow-lg transition duration-300 ease-out ${visible ? "opacity-100" : "opacity-0"} ${sideCls} ${className}`}
       >
         {children}
       </div>

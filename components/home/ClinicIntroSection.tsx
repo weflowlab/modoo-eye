@@ -10,6 +10,7 @@ import { MediaImage } from "@/components/ui/MediaImage";
 import { Button } from "@/components/ui/Button";
 import { useSite } from "@/components/SiteProvider";
 import { useMounted } from "@/components/ui/useMounted";
+import { MobileBreaks } from "@/components/ui/MobileBreaks";
 import type { HomeContent } from "@/lib/types";
 
 type Banner = HomeContent["banners"][number];
@@ -18,11 +19,11 @@ type Banner = HomeContent["banners"][number];
 const DEFAULT_BANNERS: Banner[] = [
   {
     label: "분야별 전문의가 함께 보는 안과",
-    text: "망막·녹내장·백내장·외안부·성형안과 질환의 풍부한 임상경험을 가진\n분야별 전문의가 직접 진료합니다.",
+    text: "망막·녹내장·백내장·외안부·성형안과 질환의|풍부한 임상경험을 가진\n분야별 전문의가 직접 진료합니다.",
   },
   {
     label: "대학병원 교수 출신 의료진의 원스톱 진료",
-    text: "검사부터 진단, 수술, 수술 후 관리까지 한곳에서.\n대학병원에서 진료하고 가르쳐 온 의료진이 환자의 눈 상태에 맞는 치료 방향을 안내합니다.",
+    text: "검사부터 진단, 수술, 수술 후 관리까지 한곳에서.\n대학병원에서 진료하고 가르쳐 온 의료진이|환자의 눈 상태에 맞는 치료 방향을 안내합니다.",
   },
 ];
 
@@ -70,7 +71,10 @@ export function ClinicIntroSection({ banners: bannersProp, introLabel, introText
         {/* 오버레이 문구 */}
         <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl absolute inset-0 flex flex-col justify-start py-15 md:py-30">
           <h2 className="max-w-2xl text-xl font-bold leading-tight whitespace-pre-line md:text-5xl">{b.label}</h2>
-          <p className="mt-4 max-w-xl text-base text-background/85 whitespace-pre-line md:text-xl">{b.text}</p>
+          <p className="mt-4 max-w-xl text-base text-background/85 whitespace-pre-line md:text-xl">
+            {/* "|" 는 모바일에서만 줄바꿈 */}
+            <MobileBreaks text={b.text} />
+          </p>
           <div className="mt-4 md:mt-6">
             {/* 레퍼런스: 흰 알약 버튼, hover 시 primary 배경. 병원 소개는 기존 홈페이지로 연결 */}
             <Button

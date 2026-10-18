@@ -13,7 +13,7 @@ type Props = {
 };
 
 // 레퍼런스: 활성 = border-foreground font-semibold text-foreground / 비활성 = border-transparent text-muted-foreground
-const base = "border-b-2 pb-1 transition-colors";
+const base = "shrink-0 border-b-2 pb-1 transition-colors";
 const active = "border-foreground font-semibold text-foreground";
 const inactive = "border-transparent text-muted-foreground hover:text-foreground";
 
@@ -22,7 +22,7 @@ export function CategoryTabs({ basePath, categories, current, mode = "query", cl
   const hrefOf = (slug: string) => (mode === "path" ? `/${slug}` : `${basePath}?category=${slug}`);
   const allHref = mode === "path" ? "/posts" : basePath;
   return (
-    <div className={`mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm md:text-base ${className}`}>
+    <div className={`mt-5 flex flex-nowrap gap-x-5 overflow-x-auto whitespace-nowrap text-sm [scrollbar-width:none] md:text-base [&::-webkit-scrollbar]:hidden ${className}`}>
       <Link href={allHref} className={`${base} ${isAll ? active : inactive}`}>
         전체
       </Link>

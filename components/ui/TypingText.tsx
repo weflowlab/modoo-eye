@@ -2,6 +2,7 @@
 // 화면에 들어오면 글자가 한 자씩 타이핑되듯 나타나는 텍스트 (커서 없음, 한 번만 재생).
 // 전체 문장을 보이지 않게 깔아 두어 타이핑 중에도 높이·폭이 흔들리지 않는다.
 import { useEffect, useRef, useState } from "react";
+import { MobileBreaks, stripMobileBreaks } from "./MobileBreaks";
 
 type Props = {
   text: string;
@@ -56,14 +57,14 @@ export function TypingText({ text, speed = 55, startDelay = 150, className = "",
   }, [text, speed, startDelay]);
 
   return (
-    <Tag ref={ref as never} className={`relative inline-block ${className}`} aria-label={text}>
-      {/* 자리 확보용 전체 문장 (안 보임) */}
+    <Tag ref={ref as never} className={`relative inline-block ${className}`} aria-label={stripMobileBreaks(text)}>
+      {/* 자리 확보용 전체 문장 (안 보임). "|" 는 모바일에서만 줄바꿈 */}
       <span aria-hidden className="invisible">
-        {text}
+        <MobileBreaks text={text} />
       </span>
-      {/* 실제로 보이는 타이핑 중인 글자. 부모가 가운데 정렬이어도 전체 문장의 시작점부터 한 글자씩 */}
-      <span aria-hidden className="absolute inset-0 text-left">
-        {text.slice(0, count)}
+      {/* 실제로 보이는 타이핑 중인 글자. 데스크톱은 문장 시작점부터, 모바일(두 줄)은 각 줄 가운데 */}
+      <span aria-hidden className="absolute inset-0 text-center md:text-left">
+        <MobileBreaks text={text.slice(0, count)} />
       </span>
     </Tag>
   );

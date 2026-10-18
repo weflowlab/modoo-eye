@@ -2,6 +2,7 @@
 // rank 가 있으면 레퍼런스 "가장 많이 읽은 글" 카드(모바일 세로 / md 이상 가로 + 요약) 레이아웃으로 렌더.
 import Link from "next/link";
 import type { Post } from "@/lib/types";
+import { formatDate } from "@/lib/formatDate";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { MediaImage } from "@/components/ui/MediaImage";
 
@@ -49,8 +50,11 @@ export function PostCard({ post, rank, showSummary = false, className = "" }: Pr
     <Link href={href} className={`group block ${className}`}>
       <Thumb post={post} rounded="rounded-xs" hover="transition group-hover:scale-[1.02]" />
       <div className="mt-3">
-        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground">{post.title}</h3>
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">{post.title}</h3>
         {showSummary && <p className="mt-2 line-clamp-2 text-sm text-neutral-600">{post.summary}</p>}
+        <time dateTime={post.publishedAt} className="mt-1.5 block text-sm text-neutral-500">
+          {formatDate(post.publishedAt)}
+        </time>
       </div>
     </Link>
   );

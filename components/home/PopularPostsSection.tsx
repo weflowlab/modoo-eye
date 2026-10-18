@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { MediaImage } from "@/components/ui/MediaImage";
 import { Placeholder } from "@/components/ui/Placeholder";
 import type { Post } from "@/lib/types";
+import { formatDate } from "@/lib/formatDate";
 
 type Props = { posts: Post[] }; // 조회수순 상위 글 (서버 페이지가 getPopularPosts(3) 로 넘김)
 
@@ -63,6 +64,9 @@ export function PopularPostsSection({ posts }: Props) {
                 <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug transition-colors group-hover:text-primary">
                   {post.title}
                 </h3>
+                <time dateTime={post.publishedAt} className="mt-1.5 block text-sm text-neutral-500">
+                  {formatDate(post.publishedAt)}
+                </time>
               </Link>
             </Reveal>
           ))}

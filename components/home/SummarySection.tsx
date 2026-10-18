@@ -3,14 +3,15 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { TypingText } from "@/components/ui/TypingText";
 import { CountUp } from "@/components/ui/CountUp";
+import { MobileBreaks } from "@/components/ui/MobileBreaks";
 import { getClinic } from "@/lib/payload";
 import type { ClinicInfo } from "@/lib/types";
 
 // 홈페이지(modooeye.kr) 핵심 메시지 기준. 사실 위주로 쓰고 "최고·최상" 같은 과장 표현은 쓰지 않는다 (의료광고법).
 // Payload 'home' 글로벌 값이 비어 있을 때의 기본값.
-const DEFAULT_TITLE = "대전 둔산동 망막·녹내장·백내장 전문 안과";
+const DEFAULT_TITLE = "대전 둔산동|망막·녹내장·백내장 전문 안과"; // "|" 는 모바일에서만 줄바꿈
 const defaultText = (clinic: ClinicInfo) =>
-  `${clinic.name}는 ${clinic.address}에 있는 안과로,\n망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 대학병원에서의 임상경험을 바탕으로 검사부터 수술 후 관리까지 한곳에서 진료합니다.`;
+  `${clinic.name}는 ${clinic.address.replace("238, ", "238,|")}에 있는 안과로,\n망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 대학병원에서의 임상경험을 바탕으로|검사부터 수술 후 관리까지 한곳에서 진료합니다.`;
 
 type Props = {
   title?: string; // HomeContent.summaryTitle
@@ -33,7 +34,9 @@ export async function SummarySection({ title, text }: Props) {
             <TypingText text={summaryTitle} />
           </h2>
           <Reveal variant="fade-up" delay={0.15}>
-            <p className="mt-5 whitespace-pre-line text-base font-medium leading-relaxed text-neutral-700 md:text-lg">{summaryText}</p>
+            <p className="mt-5 whitespace-pre-line text-base font-medium leading-relaxed text-neutral-700 md:text-lg">
+            <MobileBreaks text={summaryText} />
+          </p>
           </Reveal>
         </div>
 
@@ -44,7 +47,7 @@ export async function SummarySection({ title, text }: Props) {
               {clinic.stats.map((s, i) => (
                 <Reveal key={s.label} variant="fade-up" delay={0.1 * i}>
                   <div className="rounded-[11px] border border-neutral-200 bg-neutral-50 px-5 py-6 text-center transition-shadow hover:shadow-[0_8px_30px_0_var(--brand-primary-10)] md:px-6 md:py-8">
-                    <dd className="text-2xl font-bold text-primary md:text-3xl lg:text-4xl">
+                    <dd className="whitespace-nowrap text-xl font-bold text-primary md:text-3xl lg:text-4xl">
                       {/* 숫자가 0 부터 올라감 */}
                       <CountUp value={s.value} />
                     </dd>

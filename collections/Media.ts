@@ -15,12 +15,16 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: path.resolve(dirname, "../public/media"),
     mimeTypes: ["image/*"],
-    // 용도별 리사이즈 (썸네일 카드 / 본문 / OG)
+    // 업로드 시점에 가볍게 저장: 원본은 가로 1600px 이하로 줄이고 WebP(품질 82)로 변환.
+    // next/image 최적화(/_next/image)를 꺼 두었으므로(next.config) 여기서 만든 파일이 그대로 나간다.
+    resizeOptions: { width: 1600, withoutEnlargement: true },
+    formatOptions: { format: "webp", options: { quality: 82 } },
+    // 용도별 리사이즈 (썸네일 카드 / 본문 / OG). 전부 WebP
     imageSizes: [
-      { name: "thumbnail", width: 480, height: 480, position: "centre" },
-      { name: "card", width: 800, height: 800, position: "centre" },
-      { name: "content", width: 1200, height: undefined },
-      { name: "og", width: 1200, height: 630, position: "centre" },
+      { name: "thumbnail", width: 480, height: 480, position: "centre", formatOptions: { format: "webp", options: { quality: 82 } } },
+      { name: "card", width: 800, height: 800, position: "centre", formatOptions: { format: "webp", options: { quality: 82 } } },
+      { name: "content", width: 1200, height: undefined, formatOptions: { format: "webp", options: { quality: 82 } } },
+      { name: "og", width: 1200, height: 630, position: "centre", formatOptions: { format: "webp", options: { quality: 82 } } },
     ],
     adminThumbnail: "thumbnail",
     focalPoint: true,

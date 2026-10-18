@@ -3,12 +3,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCategories, getCategory, getPostsByCategory } from "@/lib/payload";
-import type { Post } from "@/lib/types";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PageTitle } from "@/components/posts/PageTitle";
 import { CategoryTabs } from "@/components/posts/CategoryTabs";
-import { PostListWithMore } from "@/components/posts/PostListWithMore";
-import { EmptyPosts } from "@/components/posts/EmptyPosts";
+import { PostBrowser } from "@/components/posts/PostBrowser";
 
 // 모든 카테고리를 빌드 시 정적 생성
 export async function generateStaticParams() {
@@ -37,17 +35,9 @@ export default async function CategoryPage({ params }: PageProps<"/[category]">)
       <PageTitle title={cat.name} />
 
       {/* 탭: 전체(/posts) + 모든 주제(/slug). 현재 주제가 활성 — 다른 주제로 바로 넘어가는 용도 */}
-      <CategoryTabs basePath={`/${cat.slug}`} categories={categories} current={cat.slug} mode="path" />
-      {/* 레퍼런스: 목록 상단 여백 mt-10 md:mt-14 */}
-      <div className="mt-10 md:mt-14">
-        <PostList posts={posts} />
-      </div>
+      {/* 탭(왼쪽) + 정렬 드롭박스(오른쪽) + 목록 */}
+      <PostBrowser posts={posts} tabs={<CategoryTabs basePath={`/${cat.slug}`} categories={categories} current={cat.slug} mode="path" />} />
     </div>
   );
 }
 
-// 글이 없으면 빈 상태 문구
-function PostList({ posts }: { posts: Post[] }) {
-  if (posts.length === 0) return <EmptyPosts />;
-  return <PostListWithMore posts={posts} initialCount={8} step={8} />;
-}

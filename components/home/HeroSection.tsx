@@ -102,8 +102,8 @@ export function HeroSection({ title, text, placeholder }: Props) {
   };
 
   return (
-    // 첫 화면을 꽉 채움: 헤더(모바일 4rem / lg 5rem)를 뺀 높이, 내용은 세로 가운데
-    <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-background lg:min-h-[calc(100svh-5rem)]">
+    // 첫 화면을 꽉 채움: 헤더(모바일 4rem / lg 5rem)와 모바일 하단 바(3.5rem)를 뺀 높이, 내용은 세로 가운데
+    <section className="relative isolate flex min-h-[calc(100svh-7.5rem)] items-center overflow-hidden bg-background md:min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)]">
       {/* 배경 장식 (weflowlab.kr/clinic-blog 히어로 방식): 가운데만 보이는 격자 + 천천히 도는 동심원 궤도 3개와 궤도 위의 점 */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         {/* 격자: 88px 간격, 가운데에서 바깥으로 사라짐 */}
@@ -114,7 +114,7 @@ export function HeroSection({ title, text, placeholder }: Props) {
           <div className="absolute -bottom-40 -right-24 size-[520px] rounded-full bg-[var(--brand-primary-10)] blur-3xl" />
         </div>
         {/* 그 위 층: 궤도 3개 — 바깥일수록 크고 느리게 (40s / 70s 역방향·점선 / 110s). 궤도마다 안과 아이콘 2개가 함께 돈다 */}
-        <div className="absolute left-1/2 top-[calc(50%-16px)] z-10 size-0">
+        <div className="absolute left-1/2 top-1/2 z-10 size-0 md:top-[calc(50%-20px)]">
           {ORBITS.map((orbit, i) => (
             <Orbit key={i} orbit={orbit} />
           ))}
@@ -122,7 +122,7 @@ export function HeroSection({ title, text, placeholder }: Props) {
       </div>
 
       {/* 세로 가운데보다 살짝 위로: 아래 여백을 위보다 크게 */}
-      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl pt-14 pb-20 text-center md:pt-16 md:pb-26">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl py-16 text-center md:pt-16 md:pb-26">
         <div className="mx-auto max-w-3xl">
           <p className="animate-fade-slide-up text-base font-bold text-primary md:text-lg" style={{ animationDuration: "0.6s" }}>
             {clinic.name} 웹블로그
@@ -168,12 +168,13 @@ export function HeroSection({ title, text, placeholder }: Props) {
           {popularKeywords.length > 0 && (
             <div className="animate-fade-slide-up mt-5 flex flex-wrap items-center justify-center gap-2" style={{ animationDelay: "0.5s", animationDuration: "0.6s" }}>
               <span className="mr-1 text-sm font-semibold text-neutral-800 md:text-base">인기 검색어</span>
-              {popularKeywords.map((kw) => (
+              {popularKeywords.map((kw, i) => (
                 <button
                   key={kw}
                   type="button"
                   onClick={() => goSearch(kw)}
-                  className="rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-sm font-semibold text-neutral-900 transition-colors hover:border-primary hover:bg-primary hover:text-white md:text-base"
+                  // 모바일은 한 줄에 맞게 3개까지만, md 이상은 전부
+                  className={`rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-sm font-semibold text-neutral-900 transition-colors hover:border-primary hover:bg-primary hover:text-white md:text-base ${i >= 3 ? "hidden md:inline-flex" : ""}`}
                 >
                   #{kw}
                 </button>

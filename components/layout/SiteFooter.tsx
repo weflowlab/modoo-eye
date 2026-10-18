@@ -45,7 +45,7 @@ export async function SiteFooter() {
       <Container size="4xl" className="grid gap-10 py-14 md:py-16 lg:grid-cols-3 lg:pl-16 lg:pr-8 xl:pl-28 xl:pr-16">
         {/* 1열: 로고 + 주소 + 지도 링크 (왼쪽) */}
         <div className="lg:w-80 lg:justify-self-start">
-          <Image src="/logo.png" alt={clinic.name} width={181} height={56} className="h-9 w-auto" />
+          <Image src="/logo.webp" alt={clinic.name} width={181} height={56} className="h-9 w-auto" />
           <p className="mt-5 flex items-start gap-2 text-sm text-neutral-600 md:text-base">
             <IconMapPin className="mt-0.5 size-4 shrink-0 text-neutral-400" />
             {clinic.address}

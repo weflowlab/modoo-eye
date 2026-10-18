@@ -3,12 +3,13 @@
 // 문구는 관리자 '병원 정보 → 글 하단 문구' 에서 바꿀 수 있고, 비어 있으면 기본 문구.
 import { IconArrowUpRight, IconMessageCircle } from "@tabler/icons-react";
 import { getClinic } from "@/lib/payload";
+import { MobileBreaks } from "@/components/ui/MobileBreaks";
 
 export const CTA_SECTION_ID = "cta";
 
 const DEFAULT_TITLE = "눈의 변화, 미루지 말고 확인하세요";
 const defaultText = (name: string) =>
-  `작은 변화도 검사로 확인하면 치료 시기를 놓치지 않을 수 있습니다.\n${name} 분야별 전문의에게 네이버 톡톡으로 상담·예약하세요.`;
+  `작은 변화도 검사로 확인하면|치료 시기를 놓치지 않을 수 있습니다.\n${name} 분야별 전문의에게|네이버 톡톡으로 상담·예약하세요.`; // "|" 는 모바일에서만 줄바꿈
 
 type Props = { className?: string };
 
@@ -22,7 +23,9 @@ export async function PostCta({ className = "" }: Props) {
       <h2 id={CTA_SECTION_ID} className="m-0! text-xl font-bold leading-snug text-foreground md:text-2xl">
         {title}
       </h2>
-      <p className="m-0! mt-3! whitespace-pre-line text-[15px] leading-relaxed text-neutral-600 md:text-base">{text}</p>
+      <p className="m-0! mt-3! whitespace-pre-line text-[15px] leading-relaxed text-neutral-600 md:text-base">
+        <MobileBreaks text={text} />
+      </p>
 
       {/* 주소 · 대표전화 */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-neutral-600 md:text-[15px]">
@@ -32,13 +35,13 @@ export async function PostCta({ className = "" }: Props) {
         </a>
       </div>
 
-      {/* 버튼: 네이버 톡톡(초록) / 홈페이지 바로가기(남색 테두리). 모바일은 세로로 전체 폭 */}
-      <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row">
+      {/* 버튼: 네이버 톡톡(초록) / 홈페이지 바로가기(남색 테두리). 모바일도 가로 배치 (글씨 작게) */}
+      <div className="mt-6 flex flex-row justify-center gap-2.5">
         <a
           href={clinic.consultUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-[11px] bg-[#03c75a] px-6 text-base font-semibold text-white no-underline! transition-colors hover:bg-[#02b04f]"
+          className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[11px] bg-[#03c75a] px-3 text-sm font-semibold text-white no-underline! transition-colors hover:bg-[#02b04f] sm:h-12 sm:flex-none sm:px-6 sm:text-base"
         >
           <IconMessageCircle className="size-5" />
           네이버 톡톡
@@ -47,7 +50,7 @@ export async function PostCta({ className = "" }: Props) {
           href={clinic.homepageUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 items-center justify-center gap-1.5 rounded-[11px] border border-primary bg-white px-6 text-base font-semibold text-primary no-underline! transition-colors hover:bg-primary hover:text-white"
+          className="inline-flex h-11 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-[11px] border border-primary bg-white px-3 text-sm font-semibold text-primary no-underline! transition-colors hover:bg-primary hover:text-white sm:h-12 sm:flex-none sm:px-6 sm:text-base"
         >
           홈페이지 바로가기
           <IconArrowUpRight className="size-4" />

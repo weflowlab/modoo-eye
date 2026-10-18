@@ -1,4 +1,4 @@
-// 검색 결과 페이지 (/search?q=검색어). 상단 그라데이션 검색 영역 + 가로형 결과 목록(2열) + View more.
+// 검색 결과 페이지 (/search?q=검색어). 상단 검색 영역(메인 히어로 톤) + 세로 카드 4열 목록 + View more.
 // 검색어가 없으면 전체 글을 최신순으로, 결과가 없으면 "검색 결과가 없습니다" 상태를 보여준다 (레퍼런스 동작).
 import { Suspense } from "react";
 import Link from "next/link";
@@ -36,7 +36,8 @@ async function SearchContent({ keywords, searchParams }: { keywords: string[] } 
       {/* 레퍼런스: 결과 영역 py-12 md:py-20 */}
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl py-12 md:py-20">
         {results.length > 0 ? (
-          <PostListWithMore key={query} posts={results} variant="list" highlight={query} initialCount={8} step={8} />
+          // 다른 목록 페이지와 같은 세로 카드 4열
+          <PostListWithMore key={query} posts={results} initialCount={8} step={8} />
         ) : query ? (
           // 결과 없음 상태
           <div className="flex flex-col items-center gap-7.5 py-12 text-center md:py-20">

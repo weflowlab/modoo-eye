@@ -1,5 +1,5 @@
 "use client";
-// 사이트 헤더. sticky 흰 띠 하나: 로고, 홈페이지 바로가기, 카테고리 메뉴(md 이상), 검색, 전체 메뉴 햄버거.
+// 사이트 헤더. sticky 남색 띠 하나: 로고, 홈페이지 바로가기, 메뉴(전체 글 + 카테고리, md 이상), 검색, 햄버거(모바일만).
 // (레퍼런스는 위에 남색 브랜드 띠가 하나 더 있었지만 단순화를 위해 제거)
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
@@ -26,9 +26,10 @@ export function SiteHeader() {
 
   // 메뉴 목록: 카테고리(진료 분야). 병원 소개·의료진은 기존 홈페이지가 담당하므로 메뉴에 두지 않는다
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
-  const nav: NavItem[] = categories
-    .map((c) => ({ id: c.slug, href: `/${c.slug}`, label: c.name }))
-    .map((n) => ({ ...n, active: isActive(n.href) }));
+  const nav: NavItem[] = [
+    { id: "posts", href: "/posts", label: "전체 글" },
+    ...categories.map((c) => ({ id: c.slug, href: `/${c.slug}`, label: c.name })),
+  ].map((n) => ({ ...n, active: isActive(n.href) }));
 
   // 경로가 바뀌면 열려 있던 패널 모두 닫기 (렌더 중 파생 상태 갱신)
   const [prevPath, setPrevPath] = useState(pathname);
@@ -69,15 +70,15 @@ export function SiteHeader() {
   return (
     <>
       {/* sticky 흰 띠. 레퍼런스: sticky top-0 z-30, h-16 lg:h-20, border-b */}
-      <header className="sticky top-0 z-30">
+      <header className="sticky top-0 z-30 relative">
         {/* 남색 띠 + 흰 글씨 */}
         <div className="bg-primary text-white">
           <Container size="4xl" className="flex h-16 items-center justify-between gap-3 md:gap-8 lg:h-20">
             {/* 왼쪽: 블로그 로고 + 홈페이지 바로가기 */}
             <div className="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-6">
               <Link href="/" aria-label="웹블로그 홈으로 이동" className="flex shrink-0 items-center">
-                {/* 남색 띠용 흰색 로고 (public/logo-white-v5.png: 남색 → 흰색, 노란 십자는 그대로) */}
-                <Image src="/logo-white-v5.png" alt={`${clinic.name} 블로그`} width={181} height={56} loading="eager" className="h-7 w-auto lg:h-10" />
+                {/* 남색 띠용 흰색 로고 (public/logo-white-v5.webp: 남색 → 흰색, 노란 십자는 그대로) */}
+                <Image src="/logo-white-v5.webp" alt={`${clinic.name} 블로그`} width={181} height={56} loading="eager" className="h-8 w-auto lg:h-10" />
               </Link>
               <a
                 href={clinic.homepageUrl}
@@ -118,13 +119,14 @@ export function SiteHeader() {
                 >
                   <IconSearch className="size-6 lg:size-7" />
                 </button>
+                {/* 햄버거는 모바일(md 미만)에서만. PC 는 메뉴가 헤더에 다 있어 불필요 */}
                 <button
                   type="button"
                   data-sheet-toggle
                   onClick={toggleMenu}
                   aria-label={menuOpen ? "전체 메뉴 닫기" : "전체 메뉴 열기"}
                   aria-expanded={menuOpen}
-                  className="rounded-full p-2 text-white transition-colors hover:bg-white/15"
+                  className="rounded-full p-2 text-white transition-colors hover:bg-white/15 md:hidden"
                 >
                   {menuOpen ? <IconX className="size-7 lg:size-8" /> : <IconMenu2 className="size-7 lg:size-8" />}
                 </button>
@@ -133,7 +135,7 @@ export function SiteHeader() {
           </Container>
         </div>
 
-        {/* 검색 패널: 헤더 아래로 펼쳐짐 + 뒤쪽 어두운 배경(바깥 클릭 닫기) */}
+        {/* 검색 패널: 헤더 아래에 덮어서 펼쳐짐(페이지를 밀지 않음) + 뒤쪽 어두운 배경(바깥 클릭 닫기) */}
         {searchOpen && (
           <>
             {mounted &&
