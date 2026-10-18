@@ -27,8 +27,17 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
-      titleSuffix: " | 모두의안과 블로그 관리자",
+      // 탭 제목은 "화면 이름 | 모두의안과 웹블로그 관리자페이지" (title 까지 넣으면 로그인 화면에서 같은 문구가 두 번 붙는다)
+      titleSuffix: "| 모두의안과 웹블로그 관리자페이지",
+      description: "모두의안과 웹블로그 관리자페이지입니다.",
       icons: [{ rel: "icon", type: "image/x-icon", url: "/favicon.ico" }], // 메인 페이지(app/icon.png)와 같은 원형 심볼
+      // 공유 미리보기: 사이트와 같은 로고 이미지 (public/og.png = app/(frontend)/opengraph-image.png 복사본)
+      openGraph: {
+        title: "모두의안과 웹블로그 관리자페이지",
+        description: "모두의안과 웹블로그 관리자페이지입니다.",
+        siteName: "모두의안과 웹블로그",
+        images: [{ url: `${process.env.NEXT_PUBLIC_SERVER_URL || ""}/og.png`, width: 1200, height: 630, alt: "모두의안과 웹블로그" }],
+      },
     },
     // 로그인 화면 로고 / 왼쪽 메뉴 로고를 병원 로고로 교체 (스타일은 app/(payload)/custom.scss)
     components: {
