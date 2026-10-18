@@ -18,7 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: `${clinic.name} 웹블로그`, template: `%s | ${clinic.name}` },
     description: `${clinic.name} 의료진이 직접 쓰는 안과 질환 정보. 망막·녹내장·백내장·외안부·성형안과 질환의 증상, 검사, 치료 안내.`,
     alternates: { types: { "application/rss+xml": "/rss.xml" } },
+    // 공유 이미지는 app/(frontend)/opengraph-image.png (로고) 가 기본. 글 페이지는 썸네일이 있으면 썸네일로 대체된다
     openGraph: { type: "website", siteName: clinic.name, locale: "ko_KR" },
+    twitter: { card: "summary_large_image" },
   };
 }
 

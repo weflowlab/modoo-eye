@@ -40,7 +40,10 @@ export async function generateMetadata({ params }: PageProps<"/[category]/[slug]
       description: post.summary,
       type: "article",
       publishedTime: post.publishedAt,
-      images: post.thumbnail ? [{ url: post.thumbnail.url, alt: post.thumbnail.alt }] : undefined,
+      // 썸네일의 1200×630 변형을 우선 사용. 없으면 사이트 기본 OG 이미지(로고)가 쓰인다
+      images: post.thumbnail
+        ? [post.thumbnail.og ? { url: post.thumbnail.og, width: 1200, height: 630, alt: post.thumbnail.alt } : { url: post.thumbnail.url, alt: post.thumbnail.alt }]
+        : undefined,
     },
   };
 }

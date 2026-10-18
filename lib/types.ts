@@ -7,7 +7,7 @@ export type Category = {
   description?: string;
 };
 
-export type ImageRef = { url: string; alt: string; width?: number; height?: number };
+export type ImageRef = { url: string; alt: string; width?: number; height?: number; og?: string }; // og: 1200×630 공유용 변형 주소
 
 export type Doctor = {
   slug: string; // /doctors/[slug]

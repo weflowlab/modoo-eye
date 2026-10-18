@@ -26,7 +26,8 @@ async function isDraft(): Promise<boolean> {
 
 function mapImage(m: Media | number | null | undefined): ImageRef | null {
   if (!m || typeof m !== "object" || !m.url) return null;
-  return { url: mediaUrl(m.url), alt: m.alt ?? "", width: m.width ?? undefined, height: m.height ?? undefined };
+  const og = m.sizes?.og?.url; // 업로드 때 만든 1200×630 변형 (공유 미리보기용)
+  return { url: mediaUrl(m.url), alt: m.alt ?? "", width: m.width ?? undefined, height: m.height ?? undefined, og: og ? mediaUrl(og) : undefined };
 }
 
 function mapCategory(c: PCategory): Category {
