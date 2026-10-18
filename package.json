@@ -11,10 +11,12 @@
     "seed": "curl -s http://localhost:3000/api/dev-seed"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.91.0",
     "@payloadcms/db-sqlite": "^3.91.0",
     "@payloadcms/live-preview-react": "^3.91.0",
     "@payloadcms/next": "^3.91.0",
     "@payloadcms/richtext-lexical": "^3.91.0",
+    "@payloadcms/storage-vercel-blob": "^3.91.0",
     "@payloadcms/translations": "^3.91.0",
     "@payloadcms/ui": "^3.91.0",
     "@tabler/icons-react": "^3.49.0",

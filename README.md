@@ -17,7 +17,7 @@ npm run seed             # (dev 서버 실행 중) 샘플 데이터 + 첫 관리
 ```
 
 시드가 만드는 관리자 계정은 `admin@modooeye.kr / modoo1234!` (환경변수 `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` 로 변경). **운영 전 반드시 바꿀 것.**
-`npm run seed -- ?force=1` 대신 `curl "http://localhost:3000/api/dev-seed?force=1"` 로 글/의료진/카테고리를 지우고 다시 넣을 수 있다.
+시드는 여러 번 실행해도 안전하다. 글은 `lib/articles.ts`(기본 글 10편)와 `lib/samplePost.ts`(블록 샘플)를 slug 로 찾아 내용만 덮어쓰고, 사진·조회수·발행일은 유지한다.
 
 ## 관리자 사용 흐름
 

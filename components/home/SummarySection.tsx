@@ -5,13 +5,7 @@ import { TypingText } from "@/components/ui/TypingText";
 import { CountUp } from "@/components/ui/CountUp";
 import { MobileBreaks } from "@/components/ui/MobileBreaks";
 import { getClinic } from "@/lib/payload";
-import type { ClinicInfo } from "@/lib/types";
-
-// 홈페이지(modooeye.kr) 핵심 메시지 기준. 사실 위주로 쓰고 "최고·최상" 같은 과장 표현은 쓰지 않는다 (의료광고법).
-// Payload 'home' 글로벌 값이 비어 있을 때의 기본값.
-const DEFAULT_TITLE = "대전 둔산동|망막·녹내장·백내장 전문 안과"; // "|" 는 모바일에서만 줄바꿈
-const defaultText = (clinic: ClinicInfo) =>
-  `${clinic.name}는 ${clinic.address.replace("238, ", "238,|")}에 있는 안과로,\n망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 대학병원에서의 임상경험을 바탕으로|검사부터 수술 후 관리까지 한곳에서 진료합니다.`;
+import * as defaults from "@/lib/homeDefaults"; // Payload 'home' 글로벌 값이 비어 있을 때의 기본 문구
 
 type Props = {
   title?: string; // HomeContent.summaryTitle
@@ -20,8 +14,8 @@ type Props = {
 
 export async function SummarySection({ title, text }: Props) {
   const clinic = await getClinic();
-  const summaryTitle = title || DEFAULT_TITLE;
-  const summaryText = text || defaultText(clinic);
+  const summaryTitle = title || defaults.SUMMARY_TITLE;
+  const summaryText = text || defaults.summaryText(clinic);
 
   return (
     <section aria-labelledby="home-summary-title" className="py-16 md:py-24">

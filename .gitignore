@@ -48,3 +48,8 @@ next-env.d.ts
 *.db
 *.db-journal
 public/media/
+
+# Blob 사용 시 Payload 임시 업로드 폴더
+.payload-media-tmp
+# SQLite WAL 보조 파일
+payload.db-*

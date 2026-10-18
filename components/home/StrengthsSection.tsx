@@ -3,28 +3,21 @@
 import { IconUsers, IconSchool, IconRoute, IconHeartHandshake, type Icon } from "@tabler/icons-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { getClinic } from "@/lib/payload";
+import { KEY_POINTS } from "@/lib/homeDefaults"; // 기본 카드 4개 (글로벌에 카드가 없을 때)
+import type { HomeContent } from "@/lib/types";
 
 type Card = { Icon: Icon; title: string; text: string };
 
-// 기본 카드 (홈페이지 핵심 메시지 기준, 과장 표현 없이)
-const DEFAULT_CARDS: Card[] = [
-  { Icon: IconUsers, title: "분야별 전문의", text: "망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 각자의 전문 분야를 진료합니다." },
-  { Icon: IconSchool, title: "대학병원 교수 출신", text: "대학병원에서 진료하고 가르쳐 온 의료진이\n직접 진료하고 수술합니다." },
-  { Icon: IconRoute, title: "원스톱 진료", text: "검사·진단·수술·수술 후 관리까지\n한곳에서 이어집니다." },
-  { Icon: IconHeartHandshake, title: "분야 간 협진", text: "여러 질환이 함께 있어도\n분야별 전문의가 함께 진료 방향을 정합니다." },
-];
+// 아이콘 순서 (i번째 카드에 붙는 아이콘)
+const ICONS: Icon[] = [IconUsers, IconSchool, IconRoute, IconHeartHandshake];
 
-// 아이콘 순서 (관리자 문구를 쓸 때 i번째 카드에 붙는 아이콘)
-const ICONS = DEFAULT_CARDS.map((c) => c.Icon);
-
-type Props = { keyPoints?: string[] }; // HomeContent.keyPoints
+type Props = { keyPoints?: HomeContent["keyPoints"] };
 
 export async function StrengthsSection({ keyPoints }: Props) {
   const clinic = await getClinic();
-  const cards: Card[] =
-    keyPoints && keyPoints.length > 0
-      ? keyPoints.slice(0, 4).map((text, i) => ({ Icon: ICONS[i % ICONS.length], title: "", text }))
-      : DEFAULT_CARDS;
+  const cards: Card[] = (keyPoints && keyPoints.length > 0 ? keyPoints : KEY_POINTS)
+    .slice(0, 4)
+    .map((k, i) => ({ Icon: ICONS[i % ICONS.length], title: k.title, text: k.text }));
 
   return (
     <section aria-labelledby="home-strengths-title" className="bg-neutral-50 py-16 md:py-24">

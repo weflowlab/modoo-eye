@@ -73,7 +73,6 @@ export interface Config {
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
-    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -86,7 +85,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
-    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -109,13 +107,7 @@ export interface Config {
   };
   user: User;
   jobs: {
-    tasks: {
-      schedulePublish: TaskSchedulePublish;
-      inline: {
-        input: unknown;
-        output: unknown;
-      };
-    };
+    tasks: unknown;
     workflows: unknown;
   };
 }
@@ -144,15 +136,28 @@ export interface UserAuthOperations {
 export interface Post {
   id: number;
   title: string;
-  /**
-   * 비워두면 제목으로 자동 생성 (한글 가능)
-   */
-  slug?: string | null;
   category: number | Category;
   author: number | Doctor;
-  publishedAt?: string | null;
   thumbnail?: (number | null) | Media;
+  /**
+   * 비우면 게시하는 순간으로 찍힙니다. 미래 시각으로 두고 게시하면 그 시각까지 사이트에 보이지 않다가 자동으로 공개됩니다. 지난 시각으로는 바꿀 수 없습니다.
+   */
+  publishedAt?: string | null;
+  /**
+   * 비워두면 제목으로 자동 생성 (한글 가능). 발행 뒤에 바꾸면 기존 주소가 끊기니 주의.
+   */
+  slug?: string | null;
+  views?: number | null;
   summary: string;
+  keyPoints?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 새 글에는 뼈대가 미리 들어 있습니다. 괄호 안 안내문을 실제 내용으로 바꾸고, 필요 없는 섹션이나 상자는 지우세요. 섹션 제목(H2)은 자동으로 01, 02 번호가 붙고, "DEFINITION | 제목" 처럼 쓰면 세로줄 앞은 영문 라벨이 됩니다. 강조 박스·단계별 안내·체크리스트·흐름도는 "+" 버튼으로 추가합니다.
+   */
   content: {
     root: {
       type: string;
@@ -185,6 +190,7 @@ export interface Post {
     | {
         label: string;
         href: string;
+        description?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -195,7 +201,6 @@ export interface Post {
       }[]
     | null;
   related?: (number | Post)[] | null;
-  views?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -244,21 +249,6 @@ export interface Doctor {
         id?: string | null;
       }[]
     | null;
-  story?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -271,6 +261,7 @@ export interface Media {
   id: number;
   alt: string;
   caption?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -363,98 +354,6 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-jobs".
- */
-export interface PayloadJob {
-  id: number;
-  /**
-   * Input data provided to the job
-   */
-  input?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  taskStatus?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  completedAt?: string | null;
-  totalTried?: number | null;
-  /**
-   * If hasError is true this job will not be retried
-   */
-  hasError?: boolean | null;
-  /**
-   * If hasError is true, this is the error that caused it
-   */
-  error?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  /**
-   * Task execution log
-   */
-  log?:
-    | {
-        executedAt: string;
-        completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
-        taskID: string;
-        input?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        output?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        state: 'failed' | 'succeeded';
-        error?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
-  queue?: string | null;
-  waitUntil?: string | null;
-  processing?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -528,12 +427,19 @@ export interface PayloadMigration {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
-  slug?: T;
   category?: T;
   author?: T;
-  publishedAt?: T;
   thumbnail?: T;
+  publishedAt?: T;
+  slug?: T;
+  views?: T;
   summary?: T;
+  keyPoints?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   content?: T;
   images?:
     | T
@@ -553,6 +459,7 @@ export interface PostsSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        description?: T;
         id?: T;
       };
   tags?:
@@ -562,7 +469,6 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
       };
   related?: T;
-  views?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -601,7 +507,6 @@ export interface DoctorsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
-  story?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -613,6 +518,7 @@ export interface DoctorsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -703,37 +609,6 @@ export interface PayloadKvSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-jobs_select".
- */
-export interface PayloadJobsSelect<T extends boolean = true> {
-  input?: T;
-  taskStatus?: T;
-  completedAt?: T;
-  totalTried?: T;
-  hasError?: T;
-  error?: T;
-  log?:
-    | T
-    | {
-        executedAt?: T;
-        completedAt?: T;
-        taskSlug?: T;
-        taskID?: T;
-        input?: T;
-        output?: T;
-        state?: T;
-        error?: T;
-        id?: T;
-      };
-  taskSlug?: T;
-  queue?: T;
-  waitUntil?: T;
-  processing?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -813,15 +688,12 @@ export interface Clinic {
       }[]
     | null;
   /**
-   * 비워 두면 기본 문구가 표시됩니다.
+   * "[의료광고 심의 및 안내사항]" 제목과 아래 의료기관 한 줄은 자동으로 붙습니다.
    */
   disclaimerText?: string | null;
-  /**
-   * 예: 눈의 변화, 미루지 말고 확인하세요
-   */
   ctaTitle?: string | null;
   /**
-   * 비워 두면 기본 문구가 표시됩니다.
+   * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
    */
   ctaText?: string | null;
   consultUrl: string;
@@ -871,16 +743,24 @@ export interface Home {
         image?: (number | null) | Media;
         mobileImage?: (number | null) | Media;
         label?: string | null;
+        /**
+         * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
+         */
         text?: string | null;
         id?: string | null;
       }[]
     | null;
-  introLabel?: string | null;
-  introText?: string | null;
+  /**
+   * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
+   */
   summaryTitle?: string | null;
+  /**
+   * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
+   */
   summaryText?: string | null;
   keyPoints?:
     | {
+        title?: string | null;
         value: string;
         id?: string | null;
       }[]
@@ -889,13 +769,6 @@ export interface Home {
     | {
         question: string;
         answer: string;
-        id?: string | null;
-      }[]
-    | null;
-  sources?:
-    | {
-        label: string;
-        href: string;
         id?: string | null;
       }[]
     | null;
@@ -1004,13 +877,12 @@ export interface HomeSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
-  introLabel?: T;
-  introText?: T;
   summaryTitle?: T;
   summaryText?: T;
   keyPoints?:
     | T
     | {
+        title?: T;
         value?: T;
         id?: T;
       };
@@ -1019,13 +891,6 @@ export interface HomeSelect<T extends boolean = true> {
     | {
         question?: T;
         answer?: T;
-        id?: T;
-      };
-  sources?:
-    | T
-    | {
-        label?: T;
-        href?: T;
         id?: T;
       };
   _status?: T;
@@ -1042,26 +907,6 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TaskSchedulePublish".
- */
-export interface TaskSchedulePublish {
-  input: {
-    type?: ('publish' | 'unpublish') | null;
-    locale?: string | null;
-    doc?: {
-      relationTo: 'posts';
-      value: number | Post;
-    } | null;
-    global?: string | null;
-    user?: {
-      relationTo: 'users';
-      value: number | User;
-    } | null;
-  };
-  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

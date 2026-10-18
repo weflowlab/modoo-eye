@@ -42,7 +42,6 @@ function mapDoctor(d: PDoctor): Doctor {
     bio: d.bio ?? "",
     career: (d.career ?? []).map((c) => c.value),
     photo: mapImage(d.photo),
-    story: d.story ?? undefined,
   };
 }
 
@@ -60,7 +59,9 @@ function mapPost(p: PPost): Post {
     categoryName: category?.name,
     title: p.title,
     summary: p.summary,
+    keyPoints: (p.keyPoints ?? []).map((k) => k.text),
     publishedAt: p.publishedAt ?? p.createdAt,
+    updatedAt: p.updatedAt,
     author: author?.slug ?? "",
     authorName: author?.name,
     tags: (p.tags ?? []).map((t) => t.tag),
@@ -70,14 +71,22 @@ function mapPost(p: PPost): Post {
     thumbnail: mapImage(p.thumbnail),
     images: (p.images ?? []).map((i) => mapImage(i.image)).filter((i): i is ImageRef => !!i),
     faq: (p.faq ?? []).map(({ question, answer }) => ({ question, answer })),
-    sources: (p.sources ?? []).map(({ label, href }) => ({ label, href })),
+    sources: (p.sources ?? []).map(({ label, href, description }) => ({ label, href, description: description ?? undefined })),
     related: (p.related ?? []).map(relSlug).filter(Boolean),
   };
 }
 
 // 발행된 글만 (draft 모드면 초안 포함)
+// 공개 조건: 발행 상태이고 발행일이 지금 이전. 발행일을 미래로 두고 게시하면 그 시각까지 사이트에 보이지 않는다 (예약 발행).
+// 미리보기(draft 모드)에서는 초안·미래 글도 보인다.
 async function publishedWhere(): Promise<Where> {
-  return (await isDraft()) ? {} : { _status: { equals: "published" } };
+  if (await isDraft()) return {};
+  return {
+    and: [
+      { _status: { equals: "published" } },
+      { or: [{ publishedAt: { less_than_equal: new Date().toISOString() } }, { publishedAt: { exists: false } }] },
+    ],
+  };
 }
 
 // ── 조회 함수 (React cache 로 요청 단위 중복 제거) ──────────
@@ -206,13 +215,10 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       label: b.label ?? "",
       text: b.text ?? "",
     })),
-    introLabel: g?.introLabel ?? "",
-    introText: g?.introText ?? "",
     summaryTitle: g?.summaryTitle ?? "",
     summaryText: g?.summaryText ?? "",
-    keyPoints: (g?.keyPoints ?? []).map((k) => k.value),
+    keyPoints: (g?.keyPoints ?? []).map((k) => ({ title: k.title ?? "", text: k.value })),
     faq: (g?.faq ?? []).map(({ question, answer }) => ({ question, answer })),
-    sources: (g?.sources ?? []).map(({ label, href }) => ({ label, href })),
   };
 });
 

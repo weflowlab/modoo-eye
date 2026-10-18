@@ -8,6 +8,9 @@ import { PageTitle } from "@/components/posts/PageTitle";
 import { CategoryTabs } from "@/components/posts/CategoryTabs";
 import { PostBrowser } from "@/components/posts/PostBrowser";
 
+// 최대 1분에 한 번 다시 생성 (예약 발행 글 반영)
+export const revalidate = 60;
+
 // 모든 카테고리를 빌드 시 정적 생성
 export async function generateStaticParams() {
   const categories = await getCategories();

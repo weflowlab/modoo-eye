@@ -14,11 +14,11 @@ export function AuthorCard({ doctor, className = "" }: Props) {
       aria-label="작성자 소개"
       className={`mt-7 flex flex-col gap-8 border border-neutral-200 bg-background p-4 md:flex-row md:p-8 ${className}`}
     >
-      {/* 레퍼런스: w-54(13.5rem) 정사각, rounded-sm, 회색 바탕 */}
-      <div className="relative w-54 shrink-0">
+      {/* 정사각 사진. 소개 + 약력 글 높이에 맞춰 데스크톱 268px (모바일 216px). rounded-sm, 회색 바탕 */}
+      <div className="relative w-54 shrink-0 md:w-67">
         {doctor.photo ? (
           <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-neutral-300">
-            <MediaImage image={doctor.photo} sizes="216px" />
+            <MediaImage image={doctor.photo} sizes="(min-width: 768px) 268px, 216px" />
           </div>
         ) : (
           <Placeholder label={`${doctor.name} 프로필`} className="aspect-square w-full rounded-sm bg-neutral-300" />
@@ -38,6 +38,14 @@ export function AuthorCard({ doctor, className = "" }: Props) {
           </div>
         )}
         <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-muted-foreground">{doctor.bio}</p>
+        {/* 약력: 관리자 '의료진 → 약력' 목록. 비어 있으면 표시하지 않는다 */}
+        {doctor.career.length > 0 && (
+          <ul className="mt-4 space-y-1 border-t border-neutral-200 pt-4 text-sm leading-relaxed text-neutral-600">
+            {doctor.career.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   );

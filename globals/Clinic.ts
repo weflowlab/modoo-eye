@@ -2,6 +2,8 @@
 // 필드 구성은 lib/types.ts 의 ClinicInfo 와 1:1 로 맞춘다.
 import type { GlobalConfig } from "payload";
 import { revalidate } from "../lib/revalidate";
+import { clinic as mockClinic } from "../lib/mock";
+import * as defaults from "../lib/clinicDefaults";
 
 // {label, href} 링크 배열 필드
 const links = (name: string, label: string) => ({
@@ -78,14 +80,22 @@ export const Clinic: GlobalConfig = {
         {
           label: "글 하단 문구",
           fields: [
+            // 기본 문구는 lib/clinicDefaults.ts. defaultValue 는 반드시 함수로 (globals/HomePage.ts 주석 참고)
             {
               name: "disclaimerText",
               label: "의료광고 안내 문구 (글 하단 면책 상자)",
               type: "textarea",
-              admin: { description: "비워 두면 기본 문구가 표시됩니다." },
+              defaultValue: () => defaults.DISCLAIMER_TEXT,
+              admin: { description: "\"[의료광고 심의 및 안내사항]\" 제목과 아래 의료기관 한 줄은 자동으로 붙습니다." },
             },
-            { name: "ctaTitle", label: "상담 블록 제목", type: "text", admin: { description: "예: 눈의 변화, 미루지 말고 확인하세요" } },
-            { name: "ctaText", label: "상담 블록 안내 문구", type: "textarea", admin: { description: "비워 두면 기본 문구가 표시됩니다." } },
+            { name: "ctaTitle", label: "상담 블록 제목", type: "text", defaultValue: () => defaults.CTA_TITLE },
+            {
+              name: "ctaText",
+              label: "상담 블록 안내 문구",
+              type: "textarea",
+              defaultValue: () => defaults.ctaText(mockClinic.name),
+              admin: { description: '"|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈' },
+            },
           ],
         },
         {

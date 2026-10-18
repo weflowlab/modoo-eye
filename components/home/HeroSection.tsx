@@ -47,10 +47,7 @@ const ORBITS = [
   },
 ];
 import { useSite } from "@/components/SiteProvider";
-
-// 기본 문구 (Payload 'home' 글로벌이 비어 있을 때)
-const DEFAULT_TEXT =
-  "망막·녹내장·백내장·외안부·성형안과 분야별 전문의가 직접 집필한 안과 정보에서 궁금한 점의 해답을 찾아보세요.";
+import * as defaults from "@/lib/homeDefaults"; // 기본 문구 (Payload 'home' 글로벌이 비어 있을 때)
 
 // 궤도 원 하나: 가운데 기준으로 놓고(translate -50%) 원이 돌며, 원 위의 아이콘 카드는 반대로 돌아 똑바로 선다. motion-reduce 면 정지
 function Orbit({ orbit }: { orbit: (typeof ORBITS)[number] }) {
@@ -86,9 +83,9 @@ export function HeroSection({ title, text, placeholder }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
-  const heroTitle = title || `${clinic.name} 의료진이\n직접 쓰는 안과 지식 가이드`;
-  const heroText = text || DEFAULT_TEXT;
-  const searchPlaceholder = placeholder || "증상이나 질환명을 검색해 보세요";
+  const heroTitle = title || defaults.heroTitle(clinic);
+  const heroText = text || defaults.HERO_TEXT;
+  const searchPlaceholder = placeholder || defaults.SEARCH_PLACEHOLDER;
 
   // 검색: /search?q= 로 이동. 키워드 칩 클릭도 같은 경로.
   const goSearch = (q: string) => {

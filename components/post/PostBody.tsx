@@ -1,4 +1,4 @@
-// 글 상세 본문. prose-content 래퍼 안에 상단 슬라이드 → 리드 문단 → 본문 순으로 렌더. FAQ 는 PostFaq 로 분리.
+// 글 상세 본문. prose-content 래퍼 안에 상단 슬라이드 → 본문 순으로 렌더. 요약은 KeySummary(목차 위), FAQ 는 PostFaq 로 분리.
 // 본문은 Payload 리치텍스트(post.content)가 있으면 RichTextContent 로, 없으면(목 데이터) sections HTML 로 그린다.
 import type { Post } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { PostImageSlider } from "./PostImageSlider";
 import { RichTextContent } from "./RichTextContent";
+import { PostSectionHeading } from "./PostSectionHeading";
 
 export const FAQ_SECTION_ID = "faq";
 
@@ -48,8 +49,8 @@ function BeforeAfter() {
 // 목 데이터(sections HTML) 렌더
 function SectionsBody({ post }: Props) {
   return post.sections.map((section, i) => (
-    <section key={section.id} className="mt-[42px] md:mt-[52px]">
-      <h2 id={section.id}>{section.heading}</h2>
+    <section key={section.id}>
+      <PostSectionHeading id={section.id} number={i + 1} title={section.heading} />
       <div dangerouslySetInnerHTML={{ __html: section.html }} />
       {i === 0 && <CaptionedFigure label="안저 사진 (자가진단 격자)" caption="자가검사 안내 – 한쪽 눈씩 가리고 중앙 점을 응시합니다" />}
       {i === 2 && <BeforeAfter />}
@@ -63,28 +64,18 @@ export function PostBody({ post }: Props) {
       {/* 본문 상단 이미지 슬라이드 3장 (◀ ▶ 이동. CMS 이미지 없으면 자리표시) */}
       <PostImageSlider images={post.images} />
 
-      {/* 리드 문단 (레퍼런스: kmac-lead — 굵고 큰 도입 문단). 요약을 그대로 사용 */}
-      <p className="mb-[22px] text-[17.5px] font-semibold leading-[1.72] text-foreground md:text-xl">{post.summary}</p>
-
-      {/* 본문: Payload 리치텍스트 우선, 없으면 섹션 HTML */}
-      {post.content ? (
-        <div className="mt-[42px] md:mt-[52px]">
-          <RichTextContent content={post.content} />
-        </div>
-      ) : (
-        <SectionsBody post={post} />
-      )}
-
+      {/* 본문: Payload 리치텍스트 우선, 없으면 섹션 HTML. 첫 문단이 도입(리드) 역할을 한다 */}
+      {post.content ? <RichTextContent content={post.content} className="mt-6" /> : <SectionsBody post={post} />}
     </div>
   );
 }
 
-// FAQ 섹션 (출처 다음에 배치). 목차의 마지막 항목이 여기로 연결된다.
-export function PostFaq({ post }: Props) {
+// FAQ 섹션 (출처 다음에 배치). 목차의 마지막 항목이 여기로 연결된다. number 는 본문 섹션 수 + 1.
+export function PostFaq({ post, number }: Props & { number: number }) {
   if (post.faq.length === 0) return null;
   return (
-    <section className="prose-content mt-[42px] md:mt-[52px]">
-      <h2 id={FAQ_SECTION_ID}>자주 묻는 질문</h2>
+    <section className="prose-content">
+      <PostSectionHeading id={FAQ_SECTION_ID} number={number} label="FAQ" title="자주 묻는 질문" />
       <FaqAccordion items={post.faq} className="mt-[22px]" />
     </section>
   );

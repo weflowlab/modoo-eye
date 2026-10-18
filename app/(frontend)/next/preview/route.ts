@@ -15,8 +15,9 @@ export async function GET(req: Request): Promise<Response> {
   if (!process.env.PREVIEW_SECRET || previewSecret !== process.env.PREVIEW_SECRET) {
     return new Response("미리보기 비밀키가 올바르지 않습니다.", { status: 403 });
   }
-  if (!path || !path.startsWith("/")) {
-    return new Response("잘못된 경로입니다.", { status: 400 });
+  // "//host" 는 다른 사이트로 가는 주소가 되므로 막는다 (카테고리가 비어 있을 때 생기던 경로)
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return new Response("잘못된 경로입니다. 카테고리와 제목을 먼저 입력하세요.", { status: 400 });
   }
 
   // 관리자로 로그인된 사용자만 초안을 볼 수 있다
@@ -30,5 +31,6 @@ export async function GET(req: Request): Promise<Response> {
   if (!user) return new Response("관리자 로그인이 필요합니다.", { status: 401 });
 
   (await draftMode()).enable();
-  redirect(path);
+  // 한글 URL 경로는 Location 헤더에 그대로 넣을 수 없어(ByteString 오류 → 500) 구간별로 다시 인코딩한다
+  redirect(path.split("/").map(encodeURIComponent).join("/"));
 }

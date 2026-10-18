@@ -1,9 +1,7 @@
 // "[의료광고 심의 및 안내사항]" 면책 문구 박스 + 의료기관 정보. 출처 섹션과 CTA 사이에 배치.
 // 문구는 관리자 '병원 정보 → 글 하단 문구' 에서 바꿀 수 있고, 비어 있으면 기본 문구.
 import { getClinic } from "@/lib/payload";
-
-const DEFAULT_TEXT =
-  "본 콘텐츠는 질환에 대한 이해를 돕기 위한 정보 제공 목적으로 작성되었으며, 의학적 진단이나 치료를 대신할 수 없습니다. 검사 결과와 치료 방법은 개인의 눈 상태에 따라 차이가 있을 수 있으며, 치료가 필요한 경우 수술·약물 등 모든 치료에는 부작용이 발생할 수 있으므로 반드시 안과 전문의의 정밀검사 및 충분한 상담 후 결정하시기 바랍니다.";
+import { DISCLAIMER_TEXT as DEFAULT_TEXT } from "@/lib/clinicDefaults";
 
 type Props = { className?: string };
 

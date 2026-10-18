@@ -34,7 +34,8 @@ export function SourceLinks({ sources, className = "" }: Props) {
           >
             <span className="mb-1.5 block text-xs font-bold tracking-wider text-primary">{hostOf(s.href)}</span>
             <span className="mb-1 block text-[15.5px] font-bold leading-[1.55] text-foreground">{s.label}</span>
-            <span className="block break-all text-[13.5px] leading-[1.6] text-neutral-500">{s.href}</span>
+            {/* 설명이 있으면 설명, 없으면 링크 주소 */}
+            <span className={`block text-[13.5px] leading-[1.6] text-neutral-500 ${s.description ? "" : "break-all"}`}>{s.description || s.href}</span>
           </a>
         ))}
       </div>

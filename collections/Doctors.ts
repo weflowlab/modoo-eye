@@ -1,4 +1,4 @@
-// 의료진 컬렉션. 의료진 목록/상세 페이지와 글 작성자 카드에 쓰인다.
+// 의료진 컬렉션. 글 하단 작성자 카드(이름·직함·사진·전문 분야·한 줄 소개·약력)에 쓰인다. 의료진 별도 페이지는 없다.
 import type { CollectionConfig } from "payload";
 import { revalidate } from "../lib/revalidate";
 import { formatSlug } from "../lib/formatSlug";
@@ -40,7 +40,6 @@ export const Doctors: CollectionConfig = {
       labels: { singular: "항목", plural: "항목" },
       fields: [{ name: "value", label: "약력", type: "text", required: true }],
     },
-    { name: "story", label: "진료 이야기 (상세 페이지 본문)", type: "richText" },
     { name: "order", label: "표시 순서", type: "number", defaultValue: 0, admin: { position: "sidebar" } },
   ],
   hooks: {

@@ -12,35 +12,22 @@ import { useSite } from "@/components/SiteProvider";
 import { useMounted } from "@/components/ui/useMounted";
 import { MobileBreaks } from "@/components/ui/MobileBreaks";
 import type { HomeContent } from "@/lib/types";
+import { BANNERS as DEFAULT_BANNERS } from "@/lib/homeDefaults"; // 기본 배너 2장 (글로벌에 배너가 없을 때). 이미지는 Placeholder
 
 type Banner = HomeContent["banners"][number];
 
-// 기본 배너 2장 (Payload 'home' 글로벌에 배너가 없을 때). 문구는 홈페이지(modooeye.kr) 핵심 메시지 기준. 이미지는 Placeholder.
-const DEFAULT_BANNERS: Banner[] = [
-  {
-    label: "분야별 전문의가 함께 보는 안과",
-    text: "망막·녹내장·백내장·외안부·성형안과 질환의|풍부한 임상경험을 가진\n분야별 전문의가 직접 진료합니다.",
-  },
-  {
-    label: "대학병원 교수 출신 의료진의 원스톱 진료",
-    text: "검사부터 진단, 수술, 수술 후 관리까지 한곳에서.\n대학병원에서 진료하고 가르쳐 온 의료진이|환자의 눈 상태에 맞는 치료 방향을 안내합니다.",
-  },
-];
-
 type Props = {
   banners?: Banner[]; // HomeContent.banners
-  introLabel?: string; // HomeContent.introLabel — 배너에 문구가 없을 때 공통 라벨
-  introText?: string; // HomeContent.introText — 배너에 문구가 없을 때 공통 소개 문구
 };
 
-export function ClinicIntroSection({ banners: bannersProp, introLabel, introText }: Props) {
+export function ClinicIntroSection({ banners: bannersProp }: Props) {
   const { clinic } = useSite();
   const mounted = useMounted();
-  // 배너 문구 우선순위: 배너 자체 문구 → 공통 소개 문구(introLabel/introText) → 기본 문구
+  // 배너 문구가 비어 있으면 기본 문구
   const banners = (bannersProp && bannersProp.length > 0 ? bannersProp : DEFAULT_BANNERS).map((b, i) => ({
     ...b,
-    label: b.label || introLabel || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].label,
-    text: b.text || introText || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].text,
+    label: b.label || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].label,
+    text: b.text || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].text,
   }));
 
   // 배너 한 장 (서버 프리렌더 시 첫 장만, 마운트 후 swiper 슬라이드로)

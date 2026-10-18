@@ -4,12 +4,9 @@
 import { IconArrowUpRight, IconMessageCircle } from "@tabler/icons-react";
 import { getClinic } from "@/lib/payload";
 import { MobileBreaks } from "@/components/ui/MobileBreaks";
+import { CTA_TITLE as DEFAULT_TITLE, ctaText as defaultText } from "@/lib/clinicDefaults";
 
 export const CTA_SECTION_ID = "cta";
-
-const DEFAULT_TITLE = "눈의 변화, 미루지 말고 확인하세요";
-const defaultText = (name: string) =>
-  `작은 변화도 검사로 확인하면|치료 시기를 놓치지 않을 수 있습니다.\n${name} 분야별 전문의에게|네이버 톡톡으로 상담·예약하세요.`; // "|" 는 모바일에서만 줄바꿈
 
 type Props = { className?: string };
 

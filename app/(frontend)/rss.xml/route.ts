@@ -3,6 +3,9 @@ import { getAllPosts, getClinic } from "@/lib/payload";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
 
+// 최대 1분에 한 번 다시 생성 (예약 발행 글 반영)
+export const revalidate = 60;
+
 const escape = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 

@@ -11,8 +11,8 @@ import { SummarySection } from "@/components/home/SummarySection";
 import { StrengthsSection } from "@/components/home/StrengthsSection";
 import { FaqSection } from "@/components/home/FaqSection";
 
-// 조회수 순위(가장 많이 읽는 글)가 갱신되도록 10분마다 다시 생성
-export const revalidate = 600;
+// 최대 1분에 한 번 다시 생성: 예약 발행(발행일이 지난 글)이 1분 안에 나타나고, 조회수 순위도 갱신된다. 방문자는 항상 캐시된 페이지를 받는다.
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [home, popular, latest] = await Promise.all([getHome(), getPopularPosts(4), getLatestPosts(8)]);
@@ -20,7 +20,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection title={home.heroTitle} text={home.heroText} placeholder={home.searchPlaceholder} />
-      <ClinicIntroSection banners={home.banners} introLabel={home.introLabel} introText={home.introText} />
+      <ClinicIntroSection banners={home.banners} />
       <PopularPostsSection posts={popular} />
       <LatestPostsSection posts={latest} />
 

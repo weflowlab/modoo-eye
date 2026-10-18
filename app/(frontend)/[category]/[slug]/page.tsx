@@ -10,6 +10,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ShareButtons } from "@/components/post/ShareButtons";
 import { TableOfContents } from "@/components/post/TableOfContents";
 import { PostBody, PostFaq, FAQ_SECTION_ID } from "@/components/post/PostBody";
+import { KeySummary } from "@/components/post/KeySummary";
 import { SourceLinks } from "@/components/post/SourceLinks";
 import { Disclaimer } from "@/components/post/Disclaimer";
 import { PostCta } from "@/components/post/PostCta";
@@ -70,6 +71,7 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
   const tocItems = [...bodyHeadings, ...(post.faq.length ? [{ id: FAQ_SECTION_ID, heading: "자주 묻는 질문" }] : [])];
 
   // 글 구조화 데이터 (검색엔진·AI 검색이 글/작성자/FAQ 를 읽도록)
+  const siteUrl = (process.env.NEXT_PUBLIC_SERVER_URL || "").replace(/\/$/, "");
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -77,10 +79,21 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
       headline: post.title,
       description: post.summary,
       datePublished: post.publishedAt,
+      dateModified: post.updatedAt ?? post.publishedAt,
       inLanguage: "ko",
       author: doctor ? { "@type": "Physician", name: doctor.name, jobTitle: doctor.title } : undefined,
       publisher: { "@type": "MedicalClinic", name: clinic.name, url: clinic.homepageUrl },
       keywords: post.tags.join(", "),
+    },
+    // 빵부스러기 (검색 결과의 경로 표시)
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "홈", item: `${siteUrl}/` },
+        { "@type": "ListItem", position: 2, name: cat?.name ?? post.categoryName ?? post.category, item: `${siteUrl}/${post.category}` },
+        { "@type": "ListItem", position: 3, name: post.title },
+      ],
     },
     post.faq.length
       ? {
@@ -128,14 +141,17 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
             </div>
           </div>
 
+          {/* 3. 핵심 요약 + 핵심 포인트 */}
+          <KeySummary summary={post.summary} points={post.keyPoints} />
+
           {/* 4. 접이식 목차 */}
           {tocItems.length > 0 && <TableOfContents items={tocItems} />}
 
-          {/* 본문부터 면책까지 목차보다 좁게 가운데 (데스크톱 86%). 레퍼런스 순서: 본문 → 출처 → FAQ → 해시태그 → 상담 → 면책 */}
+          {/* 본문부터 면책까지 목차보다 좁게 가운데 (데스크톱 86%). 레퍼런스 순서: 본문 → 출처 → FAQ → 관련 검색어(해시태그) → 상담 → 면책 */}
           <div className="mx-auto w-full lg:w-[86%]">
             <PostBody post={post} />
             {post.sources.length > 0 && <SourceLinks sources={post.sources} />}
-            <PostFaq post={post} />
+            <PostFaq post={post} number={bodyHeadings.length + 1} />
             {post.tags.length > 0 && <HashTags tags={post.tags} />}
             <PostCta />
             <Disclaimer />

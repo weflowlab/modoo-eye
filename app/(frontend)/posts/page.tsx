@@ -7,6 +7,9 @@ import { PageTitle } from "@/components/posts/PageTitle";
 import { CategoryTabs } from "@/components/posts/CategoryTabs";
 import { PostBrowser } from "@/components/posts/PostBrowser";
 
+// 최대 1분에 한 번 다시 생성 (예약 발행 글 반영)
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "전체 콘텐츠",
   description: "모든 카테고리의 글을 최신순으로 모았습니다.",

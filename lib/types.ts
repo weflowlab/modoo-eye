@@ -15,9 +15,8 @@ export type Doctor = {
   title: string; // 직함 (대표원장 / 원장)
   specialties: string[]; // 전문 분야 배지
   bio: string; // 한 줄 소개
-  career: string[]; // 약력 목록
+  career: string[]; // 약력 목록 (작성자 카드 하단)
   photo?: ImageRef | null; // 프로필 사진 (없으면 Placeholder)
-  story?: unknown; // 진료 이야기 (Lexical 리치텍스트 JSON)
 };
 
 export type FaqItem = { question: string; answer: string };
@@ -28,8 +27,10 @@ export type Post = {
   category: string; // Category.slug
   categoryName?: string;
   title: string;
-  summary: string; // 카드 요약 (1~2줄)
+  summary: string; // 핵심 요약 (글 맨 위 요약 상자, 카드 요약)
+  keyPoints?: string[]; // 핵심 포인트 (요약 상자 아래 불릿)
   publishedAt: string; // ISO 날짜
+  updatedAt?: string; // 마지막 수정 (구조화 데이터 dateModified)
   author: string; // Doctor.slug
   authorName?: string;
   tags: string[];
@@ -40,7 +41,7 @@ export type Post = {
   thumbnail?: ImageRef | null;
   images?: ImageRef[]; // 상단 이미지 슬라이드
   faq: FaqItem[];
-  sources: { label: string; href: string }[];
+  sources: { label: string; href: string; description?: string }[];
   related: string[]; // 관련 글 slug 목록
 };
 
@@ -77,13 +78,10 @@ export type HomeContent = {
   searchPlaceholder: string;
   popularKeywords: string[];
   banners: { image?: ImageRef | null; mobileImage?: ImageRef | null; label: string; text: string }[];
-  introLabel: string;
-  introText: string;
   summaryTitle: string;
   summaryText: string;
-  keyPoints: string[];
+  keyPoints: { title: string; text: string }[]; // 장점 카드 (제목은 비울 수 있음)
   faq: FaqItem[];
-  sources: { label: string; href: string }[];
 };
 
 // 헤더/푸터/퀵메뉴 등 모든 페이지가 공유하는 사이트 데이터
