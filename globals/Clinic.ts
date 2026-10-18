@@ -76,6 +76,19 @@ export const Clinic: GlobalConfig = {
           ],
         },
         {
+          label: "글 하단 문구",
+          fields: [
+            {
+              name: "disclaimerText",
+              label: "의료광고 안내 문구 (글 하단 면책 상자)",
+              type: "textarea",
+              admin: { description: "비워 두면 기본 문구가 표시됩니다." },
+            },
+            { name: "ctaTitle", label: "상담 블록 제목", type: "text", admin: { description: "예: 눈의 변화, 미루지 말고 확인하세요" } },
+            { name: "ctaText", label: "상담 블록 안내 문구", type: "textarea", admin: { description: "비워 두면 기본 문구가 표시됩니다." } },
+          ],
+        },
+        {
           label: "채널·링크",
           fields: [
             { name: "consultUrl", label: "상담·예약 버튼 연결 주소 (네이버 톡톡)", type: "text", required: true },

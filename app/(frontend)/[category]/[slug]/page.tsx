@@ -1,22 +1,21 @@
 // 글 상세 페이지 (/[category]/[slug]). 레퍼런스 blog.kimsretina.com 글 상세 구성을 그대로 옮김.
-// 구성: 빵부스러기 → [사이드 인기글 | 제목·공유 → 목차 → 본문(슬라이드·본문·FAQ) → 출처 → 면책 → CTA → 관련글 → 해시태그 → 작성자 카드] → 함께 보면 좋은 콘텐츠.
+// 구성: 빵부스러기 → [사이드 관련 글 | 제목·공유 → 목차 → 본문(슬라이드·본문) → 출처 → FAQ → 해시태그 → 상담 CTA → 면책 → 작성자 카드] → 함께 보면 좋은 콘텐츠(인기 글).
 // 데이터는 Payload(lib/payload.ts). 관리자 미리보기(draft 모드)면 초안이 보인다.
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
-import { getAllPosts, getCategory, getClinic, getDoctor, getPopularPosts, getPost, getPostsBySlugs } from "@/lib/payload";
+import { getAllPosts, getCategory, getClinic, getDoctor, getPopularPosts, getPost, getPostsByCategory, getPostsBySlugs } from "@/lib/payload";
 import { extractHeadings } from "@/lib/lexical";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ShareButtons } from "@/components/post/ShareButtons";
 import { TableOfContents } from "@/components/post/TableOfContents";
-import { PostBody, FAQ_SECTION_ID } from "@/components/post/PostBody";
+import { PostBody, PostFaq, FAQ_SECTION_ID } from "@/components/post/PostBody";
 import { SourceLinks } from "@/components/post/SourceLinks";
 import { Disclaimer } from "@/components/post/Disclaimer";
 import { PostCta } from "@/components/post/PostCta";
-import { RelatedPosts } from "@/components/post/RelatedPosts";
 import { HashTags } from "@/components/post/HashTags";
 import { AuthorCard } from "@/components/post/AuthorCard";
-import { PopularSidebar } from "@/components/post/PopularSidebar";
+import { RelatedSidebar } from "@/components/post/RelatedSidebar";
 import { MoreContents } from "@/components/post/MoreContents";
 import { ViewCounter } from "@/components/post/ViewCounter";
 
@@ -51,14 +50,18 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
   const post = await getPost(decodeURIComponent(rawCategory), decodeURIComponent(rawSlug));
   if (!post) notFound();
 
-  const [cat, doctor, popular, related, clinic, { isEnabled: isPreview }] = await Promise.all([
+  const [cat, doctor, popular, pickedRelated, sameCategory, clinic, { isEnabled: isPreview }] = await Promise.all([
     getCategory(post.category),
     getDoctor(post.author),
     getPopularPosts(6),
     getPostsBySlugs(post.related),
+    getPostsByCategory(post.category),
     getClinic(),
     draftMode(),
   ]);
+
+  // 관련 글: 관리자가 고른 글 먼저, 부족하면 같은 주제의 최신 글로 채움 (현재 글 제외, 최대 4개)
+  const related = [...pickedRelated, ...sameCategory.filter((p) => p.slug !== post.slug && !pickedRelated.some((r) => r.slug === p.slug))].slice(0, 4);
 
   // 목차: 본문 h2 (리치텍스트면 추출, 목 데이터면 sections) + FAQ
   const bodyHeadings = post.content
@@ -110,7 +113,7 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
 
       {/* 레퍼런스: lg 이상 2열 그리드 (사이드바 clamp(220px,20vw,300px) | 본문), 간격 6.25vw. 모바일은 사이드바 숨김 */}
       <div className="lg:grid lg:grid-cols-[clamp(220px,20vw,300px)_minmax(0,1fr)] lg:gap-[6.25vw]">
-        <PopularSidebar posts={popular.slice(0, 4)} />
+        <RelatedSidebar posts={related} categorySlug={post.category} categoryName={cat?.name ?? post.categoryName ?? post.category} />
 
         <article>
           {/* 2. 제목 + 작성자·날짜 + 공유/링크 복사 */}
@@ -128,25 +131,17 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
           {/* 4. 접이식 목차 */}
           {tocItems.length > 0 && <TableOfContents items={tocItems} />}
 
-          {/* 3·5·6. 본문: 이미지 슬라이드 → 본문 → FAQ */}
-          <PostBody post={post} />
+          {/* 본문부터 면책까지 목차보다 좁게 가운데 (데스크톱 86%). 레퍼런스 순서: 본문 → 출처 → FAQ → 해시태그 → 상담 → 면책 */}
+          <div className="mx-auto w-full lg:w-[86%]">
+            <PostBody post={post} />
+            {post.sources.length > 0 && <SourceLinks sources={post.sources} />}
+            <PostFaq post={post} />
+            {post.tags.length > 0 && <HashTags tags={post.tags} />}
+            <PostCta />
+            <Disclaimer />
+          </div>
 
-          {/* 7. 출처 */}
-          {post.sources.length > 0 && <SourceLinks sources={post.sources} />}
-
-          {/* 12. 면책 문구 (레퍼런스 순서: 출처 다음, CTA 앞) */}
-          <Disclaimer />
-
-          {/* 8. CTA 버튼 묶음 */}
-          <PostCta />
-
-          {/* 9. 함께 읽으면 좋은 글 */}
-          {related.length > 0 && <RelatedPosts posts={related} />}
-
-          {/* 10. 해시태그 */}
-          {post.tags.length > 0 && <HashTags tags={post.tags} />}
-
-          {/* 11. 작성자 프로필 카드 */}
+          {/* 작성자 프로필 카드는 제목·목차와 같은 넓은 폭 */}
           {doctor && <AuthorCard doctor={doctor} />}
         </article>
       </div>

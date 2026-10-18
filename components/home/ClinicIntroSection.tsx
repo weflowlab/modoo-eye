@@ -52,14 +52,16 @@ export function ClinicIntroSection({ banners: bannersProp, introLabel, introText
         {/* 레퍼런스: 데스크톱 배너 1920/920, 모바일 배너 750/1624 */}
         {desktop ? (
           <div className="relative hidden w-full aspect-[1920/920] bg-neutral-700 md:block">
-            <MediaImage image={desktop} sizes="100vw" priority={i === 0} />
+            {/* 데스크톱(md+)에서만 보임. 모바일에선 숨겨지므로 최소 크기로 선언 */}
+            <MediaImage image={desktop} sizes="(min-width: 768px) 100vw, 1px" priority={i === 0} />
           </div>
         ) : (
           <Placeholder label={`배너 ${i + 1} (데스크톱)`} className="w-full hidden md:flex aspect-[1920/920] bg-neutral-700 text-neutral-300" />
         )}
         {mobile ? (
           <div className="relative block w-full aspect-[750/1624] bg-neutral-700 md:hidden">
-            <MediaImage image={mobile} sizes="100vw" priority={i === 0} />
+            {/* 모바일에서만 보임. 데스크톱에선 숨겨지므로 최소 크기로 선언 */}
+            <MediaImage image={mobile} sizes="(min-width: 768px) 1px, 100vw" priority={i === 0} />
           </div>
         ) : (
           <Placeholder label={`배너 ${i + 1} (모바일)`} className="w-full flex md:hidden aspect-[750/1624] bg-neutral-700 text-neutral-300" />

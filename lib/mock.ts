@@ -55,6 +55,9 @@ export const clinic: ClinicInfo = {
     { label: "노안/백내장 수술", value: "12,000례 이상" },
   ],
   statsNote: "2024년 12월 기준",
+  disclaimerText: "",
+  ctaTitle: "",
+  ctaText: "",
 };
 
 // 홈페이지 클리닉 구조 그대로. slug 는 영문.

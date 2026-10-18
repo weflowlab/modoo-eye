@@ -184,6 +184,9 @@ export const getClinic = cache(async (): Promise<ClinicInfo> => {
     kakaoChannelUrl: g.kakaoChannelUrl ?? "",
     stats: (g.stats ?? []).map(({ label, value }) => ({ label, value })),
     statsNote: g.statsNote ?? "",
+    disclaimerText: g.disclaimerText ?? "",
+    ctaTitle: g.ctaTitle ?? "",
+    ctaText: g.ctaText ?? "",
   };
 });
 

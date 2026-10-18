@@ -1,10 +1,9 @@
 // 카테고리 글 목록 페이지 (/retina, /glaucoma, ...). Payload categories 컬렉션의 slug 가 경로.
-// 구성: 빵부스러기 > 제목 > 탭(전체/카테고리) > 카드 그리드 + View more
-import { Suspense } from "react";
+// 구성: 빵부스러기 > 제목 > 탭(전체 + 모든 주제, 현재 주제 활성) > 카드 그리드 + View more
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCategories, getCategory, getPostsByCategory } from "@/lib/payload";
-import type { Category, Post } from "@/lib/types";
+import type { Post } from "@/lib/types";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PageTitle } from "@/components/posts/PageTitle";
 import { CategoryTabs } from "@/components/posts/CategoryTabs";
@@ -24,12 +23,12 @@ export async function generateMetadata({ params }: PageProps<"/[category]">): Pr
 }
 
 // params 를 최상위에서 읽어 없는 카테고리는 진짜 404 상태코드를 돌려준다 (SEO).
-export default async function CategoryPage({ params, searchParams }: PageProps<"/[category]">) {
+export default async function CategoryPage({ params }: PageProps<"/[category]">) {
   const { category } = await params;
   const cat = await getCategory(decodeURIComponent(category));
   if (!cat) notFound();
 
-  const posts = await getPostsByCategory(cat.slug);
+  const [posts, categories] = await Promise.all([getPostsByCategory(cat.slug), getCategories()]);
 
   return (
     // 레퍼런스: 컨테이너 py-12 md:py-16
@@ -37,46 +36,13 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
       <Breadcrumb items={[{ label: "홈", href: "/" }, { label: cat.name }]} />
       <PageTitle title={cat.name} />
 
-      {/* searchParams(탭 필터) 를 읽는 부분은 Suspense 로 분리 */}
-      <Suspense
-        fallback={
-          <>
-            <CategoryTabs basePath={`/${cat.slug}`} categories={[cat]} />
-            <div className="mt-10 md:mt-14">
-              <PostList posts={posts} />
-            </div>
-          </>
-        }
-      >
-        <CategoryContent basePath={`/${cat.slug}`} category={cat} posts={posts} searchParams={searchParams} />
-      </Suspense>
-    </div>
-  );
-}
-
-// 탭 + 목록. ?category= 로 필터 (카테고리 페이지에는 해당 카테고리 탭 하나뿐이라 결과는 동일)
-async function CategoryContent({
-  basePath,
-  category,
-  posts,
-  searchParams,
-}: {
-  basePath: string;
-  category: Category;
-  posts: Post[];
-  searchParams: PageProps<"/[category]">["searchParams"];
-}) {
-  const { category: filter } = await searchParams;
-  const current = typeof filter === "string" ? filter : undefined;
-
-  return (
-    <>
-      <CategoryTabs basePath={basePath} categories={[category]} current={current} />
-      {/* 레퍼런스: 목록 상단 여백 mt-10 md:mt-14, 처음 6개 표시 */}
+      {/* 탭: 전체(/posts) + 모든 주제(/slug). 현재 주제가 활성 — 다른 주제로 바로 넘어가는 용도 */}
+      <CategoryTabs basePath={`/${cat.slug}`} categories={categories} current={cat.slug} mode="path" />
+      {/* 레퍼런스: 목록 상단 여백 mt-10 md:mt-14 */}
       <div className="mt-10 md:mt-14">
-        <PostList key={current ?? "all"} posts={posts} />
+        <PostList posts={posts} />
       </div>
-    </>
+    </div>
   );
 }
 

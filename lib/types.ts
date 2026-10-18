@@ -64,6 +64,9 @@ export type ClinicInfo = {
   kakaoChannelUrl: string; // 카카오채널 (퀵메뉴)
   stats: { label: string; value: string }[]; // 수술 실적 (예: 망막수술 7,000례 이상)
   statsNote: string; // 실적 기준 시점 (예: 2024년 12월 기준)
+  disclaimerText: string; // 글 하단 의료광고 안내 문구 (비면 기본 문구)
+  ctaTitle: string; // 글 하단 상담 블록 제목 (비면 기본)
+  ctaText: string; // 글 하단 상담 블록 안내 문구 (비면 기본)
 };
 
 // 메인 페이지 편집 가능 콘텐츠 (Payload 'home' 글로벌)

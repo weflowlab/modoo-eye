@@ -75,9 +75,9 @@ export function SiteHeader() {
           <Container size="4xl" className="flex h-16 items-center justify-between gap-3 md:gap-8 lg:h-20">
             {/* 왼쪽: 블로그 로고 + 홈페이지 바로가기 */}
             <div className="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-6">
-              <Link href="/" aria-label="웹블로그 홈으로 이동" className="flex h-8 shrink-0 items-center rounded-full bg-white px-3 shadow-[0_2px_8px_0_rgba(0,0,0,0.12)] lg:h-11 lg:px-5">
-                {/* 남색 띠 위에서는 남색 로고가 안 보이므로 흰 알약 안에 넣는다 */}
-                <Image src="/logo.png" alt={`${clinic.name} 블로그`} width={181} height={56} loading="eager" className="h-5 w-auto lg:h-7" />
+              <Link href="/" aria-label="웹블로그 홈으로 이동" className="flex shrink-0 items-center">
+                {/* 남색 띠용 흰색 로고 (public/logo-white-v5.png: 남색 → 흰색, 노란 십자는 그대로) */}
+                <Image src="/logo-white-v5.png" alt={`${clinic.name} 블로그`} width={181} height={56} loading="eager" className="h-7 w-auto lg:h-10" />
               </Link>
               <a
                 href={clinic.homepageUrl}

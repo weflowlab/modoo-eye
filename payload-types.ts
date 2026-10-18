@@ -812,6 +812,18 @@ export interface Clinic {
         id?: string | null;
       }[]
     | null;
+  /**
+   * 비워 두면 기본 문구가 표시됩니다.
+   */
+  disclaimerText?: string | null;
+  /**
+   * 예: 눈의 변화, 미루지 말고 확인하세요
+   */
+  ctaTitle?: string | null;
+  /**
+   * 비워 두면 기본 문구가 표시됩니다.
+   */
+  ctaText?: string | null;
   consultUrl: string;
   kakaoChannelUrl?: string | null;
   sns?:
@@ -938,6 +950,9 @@ export interface ClinicSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
+  disclaimerText?: T;
+  ctaTitle?: T;
+  ctaText?: T;
   consultUrl?: T;
   kakaoChannelUrl?: T;
   sns?:

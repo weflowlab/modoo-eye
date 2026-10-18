@@ -1,4 +1,4 @@
-// 글 상세 본문. prose-content 래퍼 안에 상단 슬라이드 → 리드 문단 → 본문 → FAQ 순으로 렌더.
+// 글 상세 본문. prose-content 래퍼 안에 상단 슬라이드 → 리드 문단 → 본문 순으로 렌더. FAQ 는 PostFaq 로 분리.
 // 본문은 Payload 리치텍스트(post.content)가 있으면 RichTextContent 로, 없으면(목 데이터) sections HTML 로 그린다.
 import type { Post } from "@/lib/types";
 import { Placeholder } from "@/components/ui/Placeholder";
@@ -60,7 +60,7 @@ function SectionsBody({ post }: Props) {
 export function PostBody({ post }: Props) {
   return (
     <div className="prose-content mt-8">
-      {/* 본문 상단 이미지 슬라이드 (CMS 이미지 없으면 자리표시) */}
+      {/* 본문 상단 이미지 슬라이드 3장 (◀ ▶ 이동. CMS 이미지 없으면 자리표시) */}
       <PostImageSlider images={post.images} />
 
       {/* 리드 문단 (레퍼런스: kmac-lead — 굵고 큰 도입 문단). 요약을 그대로 사용 */}
@@ -75,13 +75,17 @@ export function PostBody({ post }: Props) {
         <SectionsBody post={post} />
       )}
 
-      {/* FAQ: 레퍼런스는 본문 마지막 번호 섹션으로 배치 */}
-      {post.faq.length > 0 && (
-        <section className="mt-[42px] md:mt-[52px]">
-          <h2 id={FAQ_SECTION_ID}>자주 묻는 질문</h2>
-          <FaqAccordion items={post.faq} className="mt-[22px]" />
-        </section>
-      )}
     </div>
+  );
+}
+
+// FAQ 섹션 (출처 다음에 배치). 목차의 마지막 항목이 여기로 연결된다.
+export function PostFaq({ post }: Props) {
+  if (post.faq.length === 0) return null;
+  return (
+    <section className="prose-content mt-[42px] md:mt-[52px]">
+      <h2 id={FAQ_SECTION_ID}>자주 묻는 질문</h2>
+      <FaqAccordion items={post.faq} className="mt-[22px]" />
+    </section>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 // 글 본문 상단 가로형 이미지 슬라이드. 글 상세(prose-content) 맨 위에 배치.
-// 레퍼런스: 자체 구현 슬라이더(1/2/3장 보기, 4.2초 자동재생, ◀ ▶ 화살표, 점 인디케이터, 끝에서 처음으로 되감기)
+// 정방형 사진을 한 장씩, 4.2초 자동재생, ◀ ▶ 화살표, 점 인디케이터, 끝에서 처음으로 되감기. 본문 폭에 꽉 차게(글의 시작·끝선과 사진 가장자리가 일치).
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
@@ -27,7 +27,8 @@ function Slide({ image, label }: { image?: ImageRef; label: string }) {
   if (image) {
     return (
       <div className="relative aspect-square w-full overflow-hidden rounded-[12px] bg-muted">
-        <Image src={image.url} alt={image.alt || label} fill sizes="(min-width: 901px) 33vw, (min-width: 641px) 50vw, 100vw" className="object-cover" />
+        {/* prose-content 의 img 여백 규칙이 적용되면 위에 회색 띠가 생기므로 m-0! 로 막는다 */}
+        <Image src={image.url} alt={image.alt || label} fill sizes="(min-width: 1024px) 700px, 100vw" className="m-0! rounded-none! object-cover" />
       </div>
     );
   }
@@ -66,19 +67,16 @@ export function PostImageSlider({ images = [] }: Props) {
 
   return (
     // 레퍼런스: .kmac-slider (relative, 아래 여백 30px)
-    <div className="relative mb-[30px]">
+    <div className="relative mb-[30px] w-full">
       <div className="overflow-hidden rounded-[14px]">
         <Swiper
           modules={[Autoplay]}
           rewind // 레퍼런스: 마지막 다음은 처음으로
           speed={550}
           autoplay={{ delay: 4200, disableOnInteraction: false }}
-          // 레퍼런스: ≤640px 1장 / ≤900px 2장 / 이상 3장, 슬라이드 좌우 3~5px 여백
-          breakpoints={{
-            0: { slidesPerView: 1, spaceBetween: 6 },
-            641: { slidesPerView: 2, spaceBetween: 6 },
-            901: { slidesPerView: 3, spaceBetween: 10 },
-          }}
+          // 정방형 한 장씩
+          slidesPerView={1}
+          spaceBetween={10}
           onSwiper={(s) => {
             setSwiper(s);
             syncPerView(s);
