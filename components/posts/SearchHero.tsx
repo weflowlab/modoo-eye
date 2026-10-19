@@ -33,7 +33,7 @@ export function SearchHero({ query, keywords, resultCount }: Props) {
                 <span className="text-primary">&lsquo;{query}&rsquo;</span> 검색 결과
               </>
             ) : (
-              "글 검색"
+              "증상·질환 검색"
             )}
           </h1>
           {query && resultCount !== undefined && (

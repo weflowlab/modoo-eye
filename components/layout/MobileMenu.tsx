@@ -22,7 +22,7 @@ export function FullMenuSheet({ open, onClose }: FullProps) {
   const blogLinks = [
     { href: "/posts", label: "전체 글", Icon: null },
     ...categories.map((c) => ({ href: `/${c.slug}`, label: c.name, Icon: null })),
-    { href: "/search", label: "글 검색", Icon: IconSearch },
+    { href: "/search", label: "증상·질환 검색", Icon: IconSearch },
   ];
 
   const itemCls = (active: boolean) =>

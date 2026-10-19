@@ -9,7 +9,7 @@ import { SearchHero } from "@/components/posts/SearchHero";
 import { PostListWithMore } from "@/components/posts/PostListWithMore";
 import { EmptyPosts } from "@/components/posts/EmptyPosts";
 
-export const metadata: Metadata = { title: "검색" };
+export const metadata: Metadata = { title: "증상·질환 검색" };
 
 export default async function SearchPage({ searchParams }: PageProps<"/search">) {
   // 인기 키워드는 사이트 공통 데이터(home 글로벌, 비어 있으면 기본값)
