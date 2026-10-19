@@ -18,7 +18,8 @@ export function AuthorCard({ doctor, className = "" }: Props) {
       <div className="relative w-54 shrink-0 md:w-67">
         {doctor.photo ? (
           <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-neutral-300">
-            <MediaImage image={doctor.photo} sizes="(min-width: 768px) 268px, 216px" />
+            {/* 세로 프로필 사진을 정사각으로 자를 때 얼굴이 있는 위쪽을 남긴다 */}
+            <MediaImage image={doctor.photo} sizes="(min-width: 768px) 268px, 216px" className="object-top" />
           </div>
         ) : (
           <Placeholder label={`${doctor.name} 프로필`} className="aspect-square w-full rounded-sm bg-neutral-300" />
