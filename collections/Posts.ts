@@ -264,5 +264,18 @@ export const Posts: CollectionConfig = {
         await revalidate(paths);
       },
     ],
+    // 삭제 시에도 글 페이지(정적 생성)와 목록을 바로 갱신한다. 없으면 글 페이지가 다음 배포 때까지 남는다
+    afterDelete: [
+      async ({ doc, req, context }) => {
+        if (context.disableRevalidate) return;
+        const catId = doc.category && typeof doc.category === "object" ? doc.category.id : doc.category;
+        const paths = ["/", "/posts"];
+        if (catId) {
+          const cat = await req.payload.findByID({ collection: "categories", id: catId, depth: 0 });
+          paths.push(`/${cat.slug}`, `/${cat.slug}/${doc.slug}`);
+        }
+        await revalidate(paths);
+      },
+    ],
   },
 };

@@ -28,5 +28,10 @@ export const Categories: CollectionConfig = {
         if (!context.disableRevalidate) await revalidate(["/"], true);
       },
     ],
+    afterDelete: [
+      async ({ context }) => {
+        if (!context.disableRevalidate) await revalidate(["/"], true);
+      },
+    ],
   },
 };
