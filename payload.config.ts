@@ -25,6 +25,7 @@ export default buildConfig({
   // 관리자 UI
   admin: {
     user: Users.slug,
+    theme: "light", // 기기 다크 모드와 무관하게 항상 흰 화면 (계정 메뉴의 테마 선택도 사라진다)
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
       // 탭 제목은 "화면 이름 | 모두의안과 웹블로그 관리자페이지" (title 까지 넣으면 로그인 화면에서 같은 문구가 두 번 붙는다)
