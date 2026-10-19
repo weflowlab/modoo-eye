@@ -82,10 +82,18 @@ button {
 /* 모바일(768px 이하) 왼쪽 메뉴: Payload 기본은 화면 전체를 덮고 로그아웃이 아래로 밀려 스크롤해야 보였다.
    → 화면 왼쪽 80%(최대 340px) 서랍, 상단 로고+닫기, 하단 로그아웃 버튼, 오른쪽은 뒤 화면이 어둡게 비친다 */
 @media (max-width: 768px) {
-  /* 서랍은 그리드 열을 차지하지 않고 위에 떠 있는다 (본문이 오른쪽으로 밀리지 않음) */
+  /* 서랍은 그리드 열을 차지하지 않고 위에 떠 있는다. 그리드를 한 칸으로 만들어 본문이 항상 전체 폭을 쓰게 한다
+     (메뉴 칸을 0 으로만 두면 본문이 그 0px 칸에 들어가 좁게 접힌다) */
+  .template-default,
   .template-default--nav-open,
+  .template-default--nav-hydrated,
   .template-default--nav-hydrated.template-default--nav-open {
-    grid-template-columns: 0 auto;
+    grid-template-columns: 1fr;
+  }
+  .template-default .template-default__wrap {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
   }
   .nav {
     position: fixed;
