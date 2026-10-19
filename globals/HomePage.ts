@@ -56,7 +56,13 @@ export const HomePage: GlobalConfig = {
               defaultValue: () => defaults.BANNERS,
               fields: [
                 { name: "image", label: "데스크톱 이미지 (1920×920)", type: "upload", relationTo: "media" },
-                { name: "mobileImage", label: "모바일 이미지 (750×1624)", type: "upload", relationTo: "media" },
+                {
+                  name: "mobileImage",
+                  label: "모바일 이미지 (4:5, 예 800×1000)",
+                  type: "upload",
+                  relationTo: "media",
+                  admin: { description: "비우면 데스크톱 이미지를 씁니다. 더 긴 이미지는 위쪽을 남기고 아래가 잘립니다." },
+                },
                 { name: "label", label: "작은 제목", type: "text" },
                 { name: "text", label: "문구", type: "textarea", admin: { description: BREAK_HINT } },
               ],

@@ -37,7 +37,7 @@ export function ClinicIntroSection({ banners: bannersProp }: Props) {
     const mobile = b.mobileImage ?? desktop;
     return (
       <div className="relative w-full">
-        {/* 레퍼런스: 데스크톱 배너 1920/920, 모바일 배너 750/1624 */}
+        {/* 데스크톱 배너 1920/920. 모바일은 4:5 (레퍼런스의 750/1624 는 화면 한 장을 다 차지해 너무 길다). 긴 이미지는 위쪽을 남기고 아래가 잘린다 */}
         {desktop ? (
           <div className="relative hidden w-full aspect-[1920/920] bg-neutral-700 md:block">
             {/* 데스크톱(md+)에서만 보임. 모바일에선 숨겨지므로 최소 크기로 선언 */}
@@ -47,12 +47,12 @@ export function ClinicIntroSection({ banners: bannersProp }: Props) {
           <Placeholder label={`배너 ${i + 1} (데스크톱)`} className="w-full hidden md:flex aspect-[1920/920] bg-neutral-700 text-neutral-300" />
         )}
         {mobile ? (
-          <div className="relative block w-full aspect-[750/1624] bg-neutral-700 md:hidden">
-            {/* 모바일에서만 보임. 데스크톱에선 숨겨지므로 최소 크기로 선언 */}
-            <MediaImage image={mobile} sizes="(min-width: 768px) 1px, 100vw" priority={i === 0} />
+          <div className="relative block w-full aspect-[4/5] bg-neutral-700 md:hidden">
+            {/* 모바일에서만 보임. 데스크톱에선 숨겨지므로 최소 크기로 선언. 긴 이미지는 위쪽을 남기고 아래를 잘라낸다 */}
+            <MediaImage image={mobile} sizes="(min-width: 768px) 1px, 100vw" priority={i === 0} className="object-top" />
           </div>
         ) : (
-          <Placeholder label={`배너 ${i + 1} (모바일)`} className="w-full flex md:hidden aspect-[750/1624] bg-neutral-700 text-neutral-300" />
+          <Placeholder label={`배너 ${i + 1} (모바일)`} className="w-full flex md:hidden aspect-[4/5] bg-neutral-700 text-neutral-300" />
         )}
 
         {/* 오버레이 문구 */}
