@@ -205,7 +205,6 @@ export const getHome = cache(async (): Promise<HomeContent> => {
   const draft = await isDraft();
   const g = await payload.findGlobal({ slug: "home", depth: 1, draft });
   return {
-    heroImage: mapImage(g?.heroImage),
     heroTitle: g?.heroTitle ?? "",
     heroText: g?.heroText ?? "",
     searchPlaceholder: g?.searchPlaceholder ?? "",

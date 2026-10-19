@@ -728,7 +728,6 @@ export interface Clinic {
  */
 export interface Home {
   id: number;
-  heroImage?: (number | null) | Media;
   heroTitle?: string | null;
   heroText?: string | null;
   searchPlaceholder?: string | null;
@@ -741,6 +740,9 @@ export interface Home {
   banners?:
     | {
         image?: (number | null) | Media;
+        /**
+         * 비우면 데스크톱 이미지를 씁니다. 더 긴 이미지는 위쪽을 남기고 아래가 잘립니다.
+         */
         mobileImage?: (number | null) | Media;
         label?: string | null;
         /**
@@ -858,7 +860,6 @@ export interface ClinicSelect<T extends boolean = true> {
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
-  heroImage?: T;
   heroTitle?: T;
   heroText?: T;
   searchPlaceholder?: T;

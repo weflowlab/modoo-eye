@@ -79,6 +79,98 @@ button {
   justify-content: flex-end;
 }
 
+/* 모바일(768px 이하) 왼쪽 메뉴: Payload 기본은 화면 전체를 덮고 로그아웃이 아래로 밀려 스크롤해야 보였다.
+   → 화면 왼쪽 80%(최대 340px) 서랍, 상단 로고+닫기, 하단 로그아웃 버튼, 오른쪽은 뒤 화면이 어둡게 비친다 */
+@media (max-width: 768px) {
+  /* 서랍은 그리드 열을 차지하지 않고 위에 떠 있는다 (본문이 오른쪽으로 밀리지 않음) */
+  .template-default--nav-open,
+  .template-default--nav-hydrated.template-default--nav-open {
+    grid-template-columns: 0 auto;
+  }
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: calc(var(--z-modal) + 1);
+    height: 100dvh;
+    width: min(80vw, 340px);
+    background: var(--theme-bg);
+    box-shadow: 0 0 40px rgba(0, 17, 36, 0.25);
+    transform: translateX(-100%);
+    transition:
+      transform 0.2s ease-out,
+      opacity 0.15s ease-out;
+  }
+  .nav--nav-open {
+    transform: none;
+  }
+  /* 뒤 화면 어둡게 (Payload 가 만들어 둔 오버레이 의사요소 재사용) */
+  .template-default--nav-open .template-default__wrap::before {
+    background: #000;
+    opacity: 0.4;
+    visibility: visible;
+    z-index: var(--z-modal);
+  }
+
+  /* 상단: 로고(왼쪽) + 닫기(오른쪽) */
+  .nav__header {
+    width: 100%;
+    background: var(--theme-bg);
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+  .nav__header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  .nav__header-content::before {
+    content: "";
+    width: 140px;
+    height: 44px;
+    background: url("/logo.webp") no-repeat left center / contain;
+  }
+  .nav__mobile-close {
+    padding: 8px 0;
+  }
+  .nav__mobile-close .hamburger {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  /* 본문: 서랍 높이에 꽉 채워 로그아웃이 스크롤 없이 맨 아래에 보인다 */
+  .nav__scroll {
+    height: 100dvh;
+    padding-top: calc(var(--app-header-height) + 20px);
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  .nav__controls {
+    width: 100%;
+    padding-top: 16px;
+    border-top: 1px solid var(--theme-elevation-100);
+  }
+  .nav__controls > :first-child {
+    margin-top: 0;
+  }
+  /* 로그아웃: 아이콘만 있던 링크를 테두리 버튼으로 */
+  .nav__log-out {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    border: 1.5px solid #004994;
+    border-radius: 11px;
+    color: #004994;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .nav__log-out::after {
+    content: "로그아웃";
+  }
+}
+
 /* 기본(검정) 버튼을 남색 버튼으로 */
 .btn--style-primary {
   --bg-color: #004994;

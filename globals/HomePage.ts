@@ -34,7 +34,6 @@ export const HomePage: GlobalConfig = {
               label: "메인페이지 상단",
               admin: { initCollapsed: false },
               fields: [
-                { name: "heroImage", label: "배경 사진 (가로 1920 이상 권장)", type: "upload", relationTo: "media" },
                 { name: "heroTitle", label: "제목", type: "textarea", defaultValue: () => defaults.heroTitle(clinic) },
                 { name: "heroText", label: "문구", type: "textarea", defaultValue: () => defaults.HERO_TEXT },
                 { name: "searchPlaceholder", label: "검색창 안내 문구", type: "text", defaultValue: () => defaults.SEARCH_PLACEHOLDER },

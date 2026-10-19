@@ -188,7 +188,6 @@ export async function GET(): Promise<Response> {
     draft: false,
     data: {
       _status: "published",
-      heroImage: home.heroImage ?? mediaId(linkFiles("home", "home", "heroImage")[0]),
       heroTitle: home.heroTitle || homeDefaults.heroTitle(clinic),
       heroText: home.heroText || homeDefaults.HERO_TEXT,
       searchPlaceholder: home.searchPlaceholder || homeDefaults.SEARCH_PLACEHOLDER,
