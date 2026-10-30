@@ -1,12 +1,28 @@
 // 관리자 "유입 관리" 화면 (/admin/traffic). payload.config admin.components.views.traffic 에 등록.
 // 방문 기록(page-views) 최근 90일을 읽어 lib/trafficStats 로 집계하고, Payload 관리자 틀(DefaultTemplate) 안에 그린다.
-// 스타일은 app/(payload)/custom.scss 의 .traffic* 클래스.
+// 문구·카드 구성은 weflow 관리자 "유입 관리" 탭을 따른다. 스타일은 app/(payload)/custom.scss 의 .traffic* 클래스.
 import type { AdminViewServerProps } from "payload";
 import { DefaultTemplate } from "@payloadcms/next/templates";
 import { Gutter } from "@payloadcms/ui";
 import { redirect } from "next/navigation";
 import { computeTrafficStats, PERIODS, type PageViewRow, type PeriodKey } from "@/lib/trafficStats";
 import { CLICK_LABEL, DEVICE_LABEL, SOURCE_LABEL } from "@/lib/tracking";
+import {
+  IconUsers,
+  IconEye,
+  IconDoorExit,
+  IconClock,
+  IconCalendarWeek,
+  IconMapPin,
+  IconDeviceMobile,
+  IconArticle,
+  IconSearch,
+  IconPhoneCall,
+  IconLogout,
+  IconFileSearch,
+  IconTrendingUp,
+  type Icon as TablerIcon,
+} from "@tabler/icons-react";
 
 const DAYS = 90;
 
@@ -20,9 +36,35 @@ function fmtDuration(sec: number): string {
   return `${Math.floor(sec / 60)}분 ${sec % 60}초`;
 }
 
+// 카드: 제목 + 한 줄 설명 + 내용
+function Card({
+  title,
+  desc,
+  icon: Icon,
+  children,
+  className = "",
+}: {
+  title: string;
+  desc?: string;
+  icon?: TablerIcon;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`traffic__card ${className}`}>
+      <h2>
+        {Icon && <Icon className="traffic__card-icon" stroke={1.8} />}
+        {title}
+      </h2>
+      {desc && <p className="traffic__desc">{desc}</p>}
+      {children}
+    </section>
+  );
+}
+
 // 가로 막대 목록 (라벨 · 수 · 비율)
 function Bars({ rows, labelOf, unit = "회" }: { rows: [string, number][]; labelOf?: (k: string) => string; unit?: string }) {
-  if (rows.length === 0) return <p className="traffic__empty">아직 데이터가 없습니다.</p>;
+  if (rows.length === 0) return <p className="traffic__empty">데이터 없음</p>;
   const max = Math.max(1, ...rows.map((r) => r[1]));
   const total = rows.reduce((a, r) => a + r[1], 0);
   return (
@@ -50,19 +92,26 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
   const { payload } = req;
   if (!req.user) redirect(`${payload.config.routes.admin}/login?redirect=${encodeURIComponent("/admin/traffic")}`);
 
-  const periodParam = String(searchParams?.period ?? "7d");
-  const period: PeriodKey = (PERIODS.find((p) => p.key === periodParam)?.key ?? "7d") as PeriodKey;
+  const periodParam = String(searchParams?.period ?? "today");
+  const period: PeriodKey = (PERIODS.find((p) => p.key === periodParam)?.key ?? "today") as PeriodKey;
 
   // 서버 컴포넌트라 요청마다 새로 실행된다. 렌더 중 현재 시각을 읽는 것이 의도 (react-hooks/purity 는 클라이언트 기준 규칙)
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   const since = new Date(now - DAYS * 86400000).toISOString();
   const [views, posts, categories] = await Promise.all([
-    payload.find({ collection: "page-views", where: { createdAt: { greater_than_equal: since } }, pagination: false, depth: 0, sort: "createdAt" }),
-    payload.find({ collection: "posts", pagination: false, depth: 1, select: { title: true, slug: true, category: true } }),
+    // 같은 초에 들어온 기록은 id 순으로 — 방문 안에서 첫 페이지·마지막 페이지 판정이 흔들리지 않게
+    payload.find({ collection: "page-views", where: { createdAt: { greater_than_equal: since } }, pagination: false, depth: 0, sort: ["createdAt", "id"] }),
+    // 발행된 글만 (초안·임시 글은 목록에 안 올린다)
+    payload.find({
+      collection: "posts",
+      where: { _status: { equals: "published" } },
+      pagination: false,
+      depth: 1,
+      select: { title: true, slug: true, category: true },
+    }),
     payload.find({ collection: "categories", pagination: false, depth: 0 }),
   ]);
-  const stats = computeTrafficStats(views.docs as PageViewRow[], period, now);
 
   // 경로 → 사람이 읽는 이름 (글 제목, 카테고리 이름)
   const pathName = new Map<string, string>([
@@ -70,20 +119,28 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
     ["/posts", "전체 글 목록"],
     ["/search", "검색 페이지"],
   ]);
+  const postPaths = new Set<string>();
   for (const c of categories.docs) pathName.set(`/${c.slug}`, `${c.name} 목록`);
   for (const p of posts.docs) {
     const cat = typeof p.category === "object" && p.category ? p.category.slug : null;
-    if (cat && p.slug) pathName.set(`/${cat}/${p.slug}`, p.title);
+    if (cat && p.slug) {
+      pathName.set(`/${cat}/${p.slug}`, p.title);
+      postPaths.add(`/${cat}/${p.slug}`);
+    }
   }
-  const nameOf = (path: string) => {
+  const decode = (path: string) => {
     try {
-      return pathName.get(decodeURIComponent(path)) ?? decodeURIComponent(path);
+      return decodeURIComponent(path);
     } catch {
       return path;
     }
   };
+  const nameOf = (path: string) => pathName.get(path) ?? path;
+  // 한글 URL 은 기록에 인코딩된 채(%EB…) 들어오므로 집계 전에 전부 풀어서 글 목록 경로와 같은 모양으로 맞춘다
+  const rows = (views.docs as PageViewRow[]).map((r) => ({ ...r, path: decode(r.path) }));
+  const stats = computeTrafficStats(rows, period, now, (path) => postPaths.has(path));
   const maxDaily = Math.max(1, ...stats.daily.map((d) => d.sessions));
-  const hasData = views.docs.length > 0;
+  const topSource = stats.sources[0];
 
   return (
     <DefaultTemplate
@@ -108,76 +165,103 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
             ))}
           </nav>
         </div>
-        <p className="traffic__note">
-          방문자가 어느 페이지를 어디서 와서 봤는지 집계합니다. 개인을 식별하는 정보는 저장하지 않습니다. 한 방문 = 같은 기기의 하루.
-          관리자 미리보기와 봇은 세지 않습니다.
-        </p>
 
-        {!hasData && <div className="traffic__card traffic__empty-card">아직 수집된 방문 기록이 없습니다. 사이트에 방문이 생기면 여기에 표시됩니다.</div>}
+        {views.docs.length === 0 && (
+          <div className="traffic__card traffic__empty-card">아직 수집된 방문 데이터가 없습니다. 방문이 기록되면 여기에 유입·이탈 통계가 표시됩니다.</div>
+        )}
 
         {/* 요약 */}
         <div className="traffic__stats">
-          {[
-            ["방문", `${stats.sessions.toLocaleString()}회`],
-            ["페이지뷰", `${stats.pageViews.toLocaleString()}회`],
-            ["모바일 비율", `${stats.mobileShare}%`],
-            ["평균 체류", fmtDuration(stats.avgDurationSec)],
-          ].map(([label, value]) => (
-            <div key={label} className="traffic__stat">
-              <span>{label}</span>
+          {(
+            [
+              [IconUsers, "#0ea5e9", "방문자 수", `${stats.sessions.toLocaleString()}명`, "선택 기간 방문 고객"],
+              [IconEye, "#6366f1", "본 페이지 수", `${stats.pageViews.toLocaleString()}회`, "고객들이 열어본 페이지"],
+              [IconDoorExit, "#f59e0b", "즉시 이탈률", `${stats.bounceRate}%`, `한 페이지만 보고 이탈 (${stats.bounced.toLocaleString()}명)`],
+              [IconClock, "#22c55e", "평균 머문 시간", fmtDuration(stats.avgDurationSec), "한 명이 머문 평균 시간"],
+            ] as [TablerIcon, string, string, string, string][]
+          ).map(([Icon, tint, label, value, sub]) => (
+            <div key={label} className="traffic__stat" style={{ borderTopColor: tint }}>
+              <span>
+                <i className="traffic__stat-icon" style={{ background: `${tint}1f`, color: tint }}>
+                  <Icon size={20} stroke={2} />
+                </i>
+                {label}
+              </span>
               <strong>{value}</strong>
+              <em>{sub}</em>
             </div>
           ))}
         </div>
 
-        {/* 최근 14일 추이 */}
-        <section className="traffic__card">
-          <h2>최근 14일 방문 추이</h2>
+        {topSource && stats.sessions > 0 && (
+          <p className="traffic__lead">
+            <IconTrendingUp className="traffic__lead-icon" stroke={2} />
+            고객이 가장 많이 들어온 곳은 <strong>{sourceLabel(topSource[0])}</strong>이에요 — 전체 방문자의{" "}
+            <strong>{Math.round((topSource[1] / stats.sessions) * 100)}%</strong>
+          </p>
+        )}
+
+        <div className="traffic__grid">
+          <Card icon={IconMapPin} title="어디서 들어왔나요?" desc="고객들이 우리 블로그를 찾은 경로">
+            <Bars rows={stats.sources} labelOf={sourceLabel} unit="명" />
+          </Card>
+          <Card icon={IconDeviceMobile} title="무엇으로 봤나요?" desc="휴대폰·컴퓨터 등 접속 기기">
+            <Bars rows={stats.devices} labelOf={(k) => DEVICE_LABEL[k] ?? k} unit="명" />
+          </Card>
+        </div>
+
+        <Card icon={IconCalendarWeek} title="날짜별 방문자" desc="최근 14일 동안 하루에 몇 명이 왔는지">
+          {/* 좁은 화면에서는 가로로 밀어 본다 (최근 날짜가 먼저 보이도록 오른쪽 끝에서 시작) */}
+          <div className="traffic__daily-scroll">
           <div className="traffic__daily">
             {stats.daily.map((d) => (
-              <div key={d.day} className="traffic__day" title={`${d.day} · ${d.sessions}회`}>
+              <div key={d.day} className="traffic__day" title={`${d.day} · ${d.sessions}명`}>
                 <span className="traffic__day-bar" style={{ height: `${Math.max(2, (d.sessions / maxDaily) * 100)}%` }} />
                 <span className="traffic__day-value">{d.sessions || ""}</span>
                 <span className="traffic__day-label">{d.label}</span>
               </div>
             ))}
           </div>
-        </section>
+          </div>
+        </Card>
 
         <div className="traffic__grid">
-          <section className="traffic__card">
-            <h2>어디서 들어왔나 (유입 경로)</h2>
-            <Bars rows={stats.sources} labelOf={sourceLabel} />
-          </section>
-          <section className="traffic__card">
-            <h2>많이 본 글 Top 10</h2>
+          <Card icon={IconArticle} title="많이 본 글" desc="고객들이 가장 많이 읽은 글">
             <Bars rows={stats.topPaths} labelOf={nameOf} />
-          </section>
-          <section className="traffic__card">
-            <h2>검색엔진에서 어떤 글로 들어왔나</h2>
-            <p className="traffic__hint">네이버·구글은 검색어를 알려주지 않아서, 검색에서 처음 연 글로 대신 봅니다.</p>
-            {stats.landingBySearch.length === 0 && <p className="traffic__empty">아직 검색 유입이 없습니다.</p>}
+            {/* 전체 글: 0회인 글까지 조회수 순으로 */}
+            <details className="traffic__all">
+              <summary>전체 글 보기 ({postPaths.size}편)</summary>
+              <ol>
+                {[...postPaths]
+                  .map((p) => [p, stats.pathCounts[p] ?? 0] as [string, number])
+                  .sort((a, b) => b[1] - a[1] || nameOf(a[0]).localeCompare(nameOf(b[0]), "ko"))
+                  .map(([p, n]) => (
+                    <li key={p}>
+                      <span>{nameOf(p)}</span>
+                      <strong>{n.toLocaleString()}회</strong>
+                    </li>
+                  ))}
+              </ol>
+            </details>
+          </Card>
+          <Card icon={IconFileSearch} title="방문자가 첫 번째로 연 글" desc="네이버·구글 검색으로 들어온 고객이 처음 연 글">
+            {stats.landingBySearch.length === 0 && <p className="traffic__empty">데이터 없음</p>}
             {stats.landingBySearch.map(({ source, rows }) => (
               <div key={source} className="traffic__sub">
                 <h3>{SOURCE_LABEL[source] ?? source}</h3>
-                <Bars rows={rows} labelOf={nameOf} />
+                <Bars rows={rows} labelOf={nameOf} unit="명" />
               </div>
             ))}
-          </section>
-          <section className="traffic__card">
-            <h2>방문자가 블로그에서 검색한 말</h2>
-            <p className="traffic__hint">검색창에 친 단어입니다. 자주 나오는데 글이 없으면 다음 글감으로.</p>
+          </Card>
+          <Card icon={IconSearch} title="무엇을 검색했나요?" desc="방문자가 웹블로그 검색창에 친 단어입니다">
             <Bars rows={stats.queries} />
-          </section>
-          <section className="traffic__card">
-            <h2>상담 버튼 클릭</h2>
-            <p className="traffic__hint">전화·네이버 톡톡·카카오채널·홈페이지 바로가기 버튼을 누른 횟수.</p>
+          </Card>
+          <Card icon={IconPhoneCall} title="상담으로 이어졌나요?" desc="전화·네이버 톡톡·카카오채널·홈페이지 버튼을 누른 횟수">
             <Bars rows={stats.clicks} labelOf={(k) => CLICK_LABEL[k] ?? k} />
-          </section>
-          <section className="traffic__card">
-            <h2>기기</h2>
-            <Bars rows={stats.devices} labelOf={(k) => DEVICE_LABEL[k] ?? k} />
-          </section>
+          </Card>
+          <Card icon={IconLogout} title="어느 페이지에서 나갔나요?" desc="고객이 마지막으로 보고 떠난 페이지">
+            <Bars rows={stats.exitPages} labelOf={nameOf} unit="명" />
+          </Card>
         </div>
       </Gutter>
     </DefaultTemplate>

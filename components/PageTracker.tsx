@@ -96,7 +96,8 @@ export function PageTracker({ disabled = false }: { disabled?: boolean }) {
 
   // 페이지 보기
   useEffect(() => {
-    if (disabled || !pathname || trackingDisabled()) return;
+    // /next/* 는 미리보기 안내·내부 라우트라 방문자가 보는 페이지가 아니다
+    if (disabled || !pathname || pathname.startsWith("/next/") || trackingDisabled()) return;
     flush();
     maxScroll.current = 0;
 

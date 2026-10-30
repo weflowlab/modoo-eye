@@ -27,6 +27,7 @@ import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93
 import { Icon as Icon_534076e2c753ea5d539a54b05f456b1b } from '@/components/admin/Icon'
 import { Logo as Logo_a44df17d0fc3dcd873dae43dc3bf66bd } from '@/components/admin/Logo'
 import { TrafficNavLink as TrafficNavLink_d92ea78a3cd87b3a835b4e80afcbd9d6 } from '@/components/admin/TrafficNavLink'
+import { DashboardTrafficLink as DashboardTrafficLink_1ba94df12ecde2905db7ef639c64a484 } from '@/components/admin/DashboardTrafficLink'
 import { TrafficView as TrafficView_56ecdefc98763f0ae520038258c5a395 } from '@/components/admin/TrafficView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
@@ -62,6 +63,7 @@ export const importMap = {
   "@/components/admin/Icon#Icon": Icon_534076e2c753ea5d539a54b05f456b1b,
   "@/components/admin/Logo#Logo": Logo_a44df17d0fc3dcd873dae43dc3bf66bd,
   "@/components/admin/TrafficNavLink#TrafficNavLink": TrafficNavLink_d92ea78a3cd87b3a835b4e80afcbd9d6,
+  "@/components/admin/DashboardTrafficLink#DashboardTrafficLink": DashboardTrafficLink_1ba94df12ecde2905db7ef639c64a484,
   "@/components/admin/TrafficView#TrafficView": TrafficView_56ecdefc98763f0ae520038258c5a395,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e

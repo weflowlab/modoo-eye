@@ -49,6 +49,7 @@ export default buildConfig({
       },
       // 유입 관리: 왼쪽 메뉴 링크 + /admin/traffic 화면 (방문 기록 집계)
       afterNavLinks: ["@/components/admin/TrafficNavLink#TrafficNavLink"],
+      beforeDashboard: ["@/components/admin/DashboardTrafficLink#DashboardTrafficLink"],
       views: {
         traffic: { Component: "@/components/admin/TrafficView#TrafficView", path: "/traffic", exact: true },
       },

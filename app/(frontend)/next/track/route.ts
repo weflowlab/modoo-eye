@@ -41,6 +41,7 @@ export async function POST(req: Request): Promise<Response> {
   const sessionId = str(body.sessionId, 80);
   const path = str(body.path, 300);
   if (!sessionId || !path) return new Response(null, { status: 400 });
+  if (path.startsWith("/next/") || path.startsWith("/admin")) return new Response(null, { status: 204 }); // 내부 경로는 세지 않는다
   const device = detectDevice(ua);
 
   // 상담 버튼 클릭

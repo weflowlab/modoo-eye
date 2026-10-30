@@ -78,10 +78,71 @@ button {
   display: none;
 }
 
+/* 대시보드 상단 "유입 관리" 안내 + 버튼 */
+.dashboard-traffic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 18px 22px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 12px;
+  background: #eef3fa;
+}
+.dashboard-traffic strong {
+  display: block;
+  font-size: 16px;
+  color: #004994;
+}
+.dashboard-traffic span {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--theme-elevation-600);
+}
+.dashboard-traffic .btn {
+  margin: 0;
+}
+
 /* 유입 관리 화면 (components/admin/TrafficView) */
+.traffic__lead {
+  margin: 0 0 24px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  background: #004994;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1.5;
+}
+.traffic__lead strong {
+  font-weight: 800;
+}
+.traffic__lead-icon {
+  width: 22px;
+  height: 22px;
+  vertical-align: -5px;
+  margin-right: 8px;
+}
+.traffic__stat em {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.5;
+  font-style: normal;
+  color: var(--theme-elevation-450);
+}
+.traffic__card p.traffic__desc {
+  margin: -8px 0 12px;
+  color: var(--theme-elevation-500);
+  font-size: 13.5px;
+}
 .traffic {
-  padding-top: 8px;
-  padding-bottom: 48px;
+  padding-top: 28px;
+  padding-bottom: 56px;
+  max-width: 100%;
+  overflow-x: clip; /* 어떤 카드가 넘쳐도 페이지가 옆으로 밀리지 않게 */
 }
 .traffic__head {
   display: flex;
@@ -89,6 +150,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 28px;
 }
 .traffic__head h1 {
   margin: 0;
@@ -126,26 +188,50 @@ button {
 }
 .traffic__stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); /* 1fr 만 쓰면 긴 글자가 칸을 화면 밖으로 늘린다 */
+  gap: 16px;
+  margin-bottom: 24px;
 }
 .traffic__stat {
-  padding: 18px 20px;
+  padding: 18px 22px;
   border: 1px solid var(--theme-elevation-150);
+  border-top: 4px solid #004994; /* 색은 인라인(borderTopColor) */
   border-radius: 12px;
   background: var(--theme-elevation-0);
 }
 .traffic__stat span {
-  display: block;
-  color: var(--theme-elevation-500);
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--theme-elevation-600);
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.4;
+}
+.traffic__stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-style: normal;
+}
+.traffic__card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.traffic__card-icon {
+  width: 20px;
+  height: 20px;
+  color: #004994;
 }
 .traffic__stat strong {
   display: block;
-  margin-top: 6px;
-  font-size: 26px;
+  margin: 8px 0 6px;
+  font-size: 28px;
+  line-height: 1.1;
   font-weight: 800;
   color: #004994;
   letter-spacing: -0.02em;
@@ -227,6 +313,47 @@ button {
 .traffic__bar-value small {
   color: var(--theme-elevation-400);
 }
+/* 전체 글 펼침 목록 */
+.traffic__all {
+  margin-top: 14px;
+  border-top: 1px solid var(--theme-elevation-100);
+  padding-top: 10px;
+}
+.traffic__all summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: #004994;
+}
+.traffic__all ol {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: post;
+}
+.traffic__all li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--theme-elevation-100);
+  font-size: 14px;
+}
+.traffic__all li::before {
+  counter-increment: post;
+  content: counter(post) ".";
+  color: var(--theme-elevation-400);
+  min-width: 1.6em;
+}
+.traffic__all li span {
+  flex: 1;
+  min-width: 0;
+}
+.traffic__all li strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 /* 14일 세로 막대 */
 .traffic__daily {
   display: grid;
@@ -260,18 +387,91 @@ button {
   font-size: 11px;
   color: var(--theme-elevation-500);
 }
+/* 날짜별 차트 가로 스크롤 래퍼. direction: rtl 로 처음부터 오른쪽(최근) 끝이 보이게 하고, 안쪽은 다시 ltr */
+.traffic__daily-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  direction: rtl;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.traffic__daily-scroll .traffic__daily {
+  direction: ltr;
+  min-width: 560px;
+}
 @media (max-width: 1024px) {
   .traffic__stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .traffic__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .traffic__bars li {
     grid-template-columns: minmax(0, 8rem) 1fr auto;
   }
   .traffic__day-label {
-    font-size: 9px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 768px) {
+  .traffic__head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  /* 기간 칩: 줄바꿈 대신 가로로 밀어 선택 */
+  .traffic__periods {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .traffic__periods::-webkit-scrollbar {
+    display: none;
+  }
+  .traffic__periods a {
+    flex: 0 0 auto;
+  }
+  .traffic__stats {
+    gap: 10px;
+  }
+  .traffic__stat {
+    padding: 14px 16px;
+  }
+  .traffic__stat strong {
+    font-size: 24px;
+  }
+  .traffic__stat-icon {
+    width: 30px;
+    height: 30px;
+  }
+  /* 모바일: 문장이 두 줄로 접히므로 아이콘을 왼쪽에 두 줄 높이로 크게 */
+  .traffic__lead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+  .traffic__lead-icon {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    vertical-align: 0;
+  }
+  .traffic__card {
+    padding: 16px;
+  }
+  .traffic__bars li {
+    grid-template-columns: minmax(0, 6.5rem) 1fr auto;
+    font-size: 13px;
+  }
+  .traffic__bar-value small {
+    display: none;
   }
 }
 

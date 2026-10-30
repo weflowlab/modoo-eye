@@ -53,9 +53,13 @@ export type TrafficStats = {
   sessions: number;
   pageViews: number;
   mobileShare: number; // %
+  bounced: number; // 한 페이지만 보고 나간 방문 수
+  bounceRate: number; // %
   avgDurationSec: number;
   sources: [string, number][]; // 유입 소스별 방문 (광고는 "naver-ad" 식)
-  topPaths: [string, number][]; // 많이 본 페이지 (페이지뷰 기준)
+  topPaths: [string, number][]; // 많이 본 글 (페이지뷰 기준, 글 페이지만)
+  pathCounts: Record<string, number>; // 글 경로별 페이지뷰 전체 (전체 글 목록용)
+  exitPages: [string, number][]; // 마지막으로 보고 떠난 페이지 (방문 기준)
   landingBySearch: { source: string; rows: [string, number][] }[]; // 검색엔진별 착지 글 (방문 기준)
   queries: [string, number][]; // 블로그 안 검색어
   adKeywords: [string, number][]; // 광고 키워드별 방문
@@ -64,7 +68,8 @@ export type TrafficStats = {
   devices: [string, number][];
 };
 
-export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now = Date.now()): TrafficStats {
+/** @param isPost 글 페이지 경로인지 (많이 본 글은 글만 센다. 목록·메인은 제외) */
+export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now = Date.now(), isPost: (path: string) => boolean = () => true): TrafficStats {
   const start = periodStart(period, now);
   const rows = all.filter((r) => new Date(r.createdAt).getTime() >= start);
   const views = rows.filter((r) => (r.event ?? "view") === "view");
@@ -83,11 +88,15 @@ export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now =
   const adKeywords: Count = {};
   const devices: Count = {};
   const landing: Record<string, Count> = {};
+  const exits: Count = {};
   let durSum = 0;
   let durN = 0;
   let mobile = 0;
+  let bounced = 0;
   for (const s of sessions) {
     const entry = s[0];
+    inc(exits, s[s.length - 1].path);
+    if (s.length === 1) bounced++;
     const paid = s.filter((v) => v.medium === "cpc" || v.medium === "paid");
     if (paid.length) {
       new Set(paid.map((v) => `${v.source || "ad"}-ad`)).forEach((k) => inc(sources, k));
@@ -109,7 +118,7 @@ export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now =
   const paths: Count = {};
   const queries: Count = {};
   for (const v of views) {
-    inc(paths, v.path);
+    if (isPost(v.path)) inc(paths, v.path);
     if (v.query) inc(queries, v.query.trim().toLowerCase());
   }
   const clicks: Count = {};
@@ -141,9 +150,13 @@ export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now =
     sessions: sessions.length,
     pageViews: views.length,
     mobileShare: sessions.length ? Math.round((mobile / sessions.length) * 100) : 0,
+    bounced,
+    bounceRate: sessions.length ? Math.round((bounced / sessions.length) * 100) : 0,
     avgDurationSec: durN ? Math.round(durSum / durN / 1000) : 0,
     sources: sorted(sources),
     topPaths: sorted(paths).slice(0, 10),
+    pathCounts: paths,
+    exitPages: sorted(exits).slice(0, 6),
     landingBySearch: Object.entries(landing)
       .sort((a, b) => Object.values(b[1]).reduce((x, y) => x + y, 0) - Object.values(a[1]).reduce((x, y) => x + y, 0))
       .map(([source, m]) => ({ source, rows: sorted(m).slice(0, 6) })),
