@@ -3,6 +3,7 @@
 // 나갈 때 체류시간·스크롤 도달률을 보낸다. 상담 버튼(전화·톡톡·카카오·홈페이지) 클릭도 기록한다.
 // - 한 방문 = 기기당 하루 (localStorage 의 기기 id + 한국시간 날짜)
 // - localhost 와 관리자 미리보기(draft 모드)는 세지 않는다. 주소 뒤에 ?track=1 을 붙이면 로컬에서도 기록(테스트용)
+// - 관리자로 로그인된 브라우저의 방문은 서버(/next/v)가 걸러 낸다 (방문자 입장 테스트는 시크릿 창)
 // - 개인정보는 보내지 않는다 (경로·리퍼러·UTM·기기 종류만)
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
