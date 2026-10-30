@@ -37,10 +37,12 @@
    햄버거 메뉴 서랍의 머리(로고+닫기)와 메뉴 본문 시작 위치도 같은 변수를 쓰므로 함께 커진다 */
 :root {
   --app-header-height: calc(var(--base) * 3.2);
+  --doc-controls-height: calc(var(--base) * 3.2); /* 글 편집 상단 바. 떠 있는 햄버거(상단 바 높이 기준 중앙)와 세로 중심이 맞게 같은 값 */
 }
 @media (max-width: 1024px) {
   :root {
     --app-header-height: calc(var(--base) * 2.9);
+    --doc-controls-height: calc(var(--base) * 2.9);
   }
 }
 
@@ -78,52 +80,57 @@ button {
   display: none;
 }
 
-/* 대시보드 상단 "유입 관리" 안내 + 버튼 */
-.dashboard-traffic {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 24px;
-  padding: 18px 22px;
-  border: 1px solid var(--theme-elevation-150);
-  border-radius: 12px;
-  background: #eef3fa;
+/* 대시보드 "통계" 묶음 (components/admin/DashboardTrafficLink): Payload 묶음과 같은 마크업을 써서 스타일은 그대로 상속. li 는 카드 폭만 맞춘다 */
+.dashboard-stats-widget .collections__card-list > li {
+  display: contents;
 }
-.dashboard-traffic strong {
-  display: block;
-  font-size: 16px;
-  color: #004994;
+/* "통계" 글자 위 간격 = 글자와 카드 사이 간격(var(--base)). 앞 위젯 아래 여백 6px 이 이미 있으므로 그만큼 뺀다 */
+.dashboard-stats-widget {
+  padding-top: calc(var(--base) - 6px) !important;
 }
-.dashboard-traffic span {
-  display: block;
-  margin-top: 2px;
-  font-size: 14px;
-  color: var(--theme-elevation-600);
-}
-.dashboard-traffic .btn {
-  margin: 0;
+@media (max-width: 768px) {
+  /* 모바일 대시보드: 위아래 숨 쉴 여백 */
+  .dashboard.gutter {
+    padding-top: 24px;
+    padding-bottom: 48px;
+  }
+  .collections__group {
+    margin-bottom: 28px;
+  }
 }
 
 /* 유입 관리 화면 (components/admin/TrafficView) */
 .traffic__lead {
-  margin: 0 0 24px;
-  padding: 18px 22px;
-  border-radius: 12px;
-  background: #004994;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px; /* 위(요약 칸)·아래(카드) 간격을 카드 사이 간격 16px 과 같게 */
+  padding: 20px 22px;
+  border-radius: 14px;
+  background: #e6edf7;
+  color: var(--theme-text);
   font-size: 17px;
   line-height: 1.5;
 }
 .traffic__lead strong {
   font-weight: 800;
+  color: #004994;
 }
+/* 문장 앞 아이콘: 요약 칸과 같은 둥근 사각형 배지 (반투명 흰 배경) */
 .traffic__lead-icon {
-  width: 22px;
-  height: 22px;
-  vertical-align: -5px;
-  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #004994;
+  color: #fff;
+  font-style: normal;
+}
+.traffic__br-mobile {
+  display: none; /* 768px 이하에서만 줄바꿈 */
 }
 .traffic__stat em {
   display: block;
@@ -134,26 +141,46 @@ button {
   color: var(--theme-elevation-450);
 }
 .traffic__card p.traffic__desc {
-  margin: -8px 0 12px;
+  margin: 4px 0 0;
   color: var(--theme-elevation-500);
   font-size: 13.5px;
+  line-height: 1.5;
 }
 .traffic {
-  padding-top: 28px;
+  padding-top: 24px;
   padding-bottom: 56px;
   max-width: 100%;
   overflow-x: clip; /* 어떤 카드가 넘쳐도 페이지가 옆으로 밀리지 않게 */
+}
+/* 상단 띠: 글 편집 화면의 doc-controls 처럼 반투명 배경으로 따라다닌다 */
+.traffic__sticky {
+  /* 높이는 헤더와 같게: 떠 있는 햄버거 버튼이 헤더 높이 칸 안에서 가운데 정렬되므로,
+     스크롤 전(헤더 옆)·스크롤 후(이 바 옆) 어느 때나 "유입 관리" 글자와 세로 중심이 맞는다 */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: var(--app-header-height);
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--theme-bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--theme-elevation-100);
 }
 .traffic__head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* 왼쪽 제목, 오른쪽 기간 칩 */
   gap: 12px;
-  margin-bottom: 28px;
+  width: 100%;
+  padding-top: 0; /* 바 높이(헤더와 같음) 안에서 가운데 정렬 → 위·아래 여백이 저절로 같다 */
+  padding-bottom: 0;
 }
 .traffic__head h1 {
   margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
 }
 .traffic__periods {
   display: flex;
@@ -190,7 +217,7 @@ button {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr)); /* 1fr 만 쓰면 긴 글자가 칸을 화면 밖으로 늘린다 */
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 .traffic__stat {
   padding: 18px 22px;
@@ -217,15 +244,17 @@ button {
   border-radius: 10px;
   font-style: normal;
 }
-.traffic__card h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 .traffic__card-icon {
-  width: 20px;
-  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e6edf7;
   color: #004994;
+  font-style: normal;
 }
 .traffic__stat strong {
   display: block;
@@ -244,9 +273,18 @@ button {
   margin-bottom: 16px;
 }
 .traffic__card h2 {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 17px;
   font-weight: 700;
+}
+.traffic__card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.traffic__card-head > div {
+  min-width: 0;
 }
 .traffic__card--muted {
   background: var(--theme-elevation-50);
@@ -265,6 +303,11 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  margin-bottom: 16px;
+}
+/* 묶음 안 카드는 묶음의 gap 만 쓴다 (카드 여백까지 더해지면 32px 로 벌어져 카드마다 간격이 달라진다) */
+.traffic__grid .traffic__card {
+  margin-bottom: 0;
 }
 .traffic__sub h3 {
   margin: 12px 0 6px;
@@ -414,10 +457,28 @@ button {
   }
 }
 @media (max-width: 768px) {
+  /* 모바일은 상단 바를 고정하지 않고 보통 흐름으로 (헤더 → 제목 10px, 기간 칩 → 요약 칸 20px) */
+  .traffic__sticky {
+    position: static;
+    height: auto;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 0;
+  }
+  .traffic {
+    padding-top: 20px;
+  }
   .traffic__head {
     flex-direction: column;
     align-items: stretch;
-    gap: 14px;
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 0;
+  }
+  .traffic__head h1 {
+    font-size: 20px;
+    line-height: 1.1;
   }
   /* 기간 칩: 줄바꿈 대신 가로로 밀어 선택 */
   .traffic__periods {
@@ -425,7 +486,7 @@ button {
     max-width: 100%;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 0;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -436,7 +497,7 @@ button {
     flex: 0 0 auto;
   }
   .traffic__stats {
-    gap: 10px;
+    gap: 16px; /* 카드 사이 간격을 전부 16px 로 통일 */
   }
   .traffic__stat {
     padding: 14px 16px;
@@ -448,20 +509,12 @@ button {
     width: 30px;
     height: 30px;
   }
-  /* 모바일: 문장이 두 줄로 접히므로 아이콘을 왼쪽에 두 줄 높이로 크게 */
   .traffic__lead {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-size: 15px;
     padding: 14px 16px;
   }
-  .traffic__lead-icon {
-    flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
-    margin: 0;
-    vertical-align: 0;
+  .traffic__br-mobile {
+    display: inline;
   }
   .traffic__card {
     padding: 16px;
@@ -624,6 +677,28 @@ button {
 .modoo-logo--login {
   width: 220px;
   margin: 0 auto;
+}
+
+/* 햄버거(메뉴 열고 닫기) 버튼을 상단 바 높이 기준 세로 중앙에 */
+.template-default__nav-toggler-container,
+.app-header__content,
+.app-header__wrapper {
+  height: var(--app-header-height);
+  align-items: center;
+}
+.template-default__nav-toggler {
+  display: flex;
+  align-items: center;
+  height: var(--app-header-height);
+  margin: 0;
+}
+.nav-toggler .hamburger {
+  height: auto;
+}@media (max-width: 768px) {
+  .app-header__mobile-nav-toggler {
+    height: var(--app-header-height);
+    margin: 0;
+  }
 }
 
 /* 상단 바 왼쪽 로고: Payload 기본은 18×18 아이콘 자리라 사이트 헤더 로고 높이(모바일 32px, 데스크톱 40px)에 맞춘다 */

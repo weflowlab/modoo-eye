@@ -49,7 +49,7 @@ export default buildConfig({
       },
       // 유입 관리: 왼쪽 메뉴 링크 + /admin/traffic 화면 (방문 기록 집계)
       afterNavLinks: ["@/components/admin/TrafficNavLink#TrafficNavLink"],
-      beforeDashboard: ["@/components/admin/DashboardTrafficLink#DashboardTrafficLink"],
+      afterDashboard: ["@/components/admin/DashboardTrafficLink#DashboardTrafficLink"], // "콘텐츠·설정" 아래 "통계 > 유입 관리" 카드
       views: {
         traffic: { Component: "@/components/admin/TrafficView#TrafficView", path: "/traffic", exact: true },
       },

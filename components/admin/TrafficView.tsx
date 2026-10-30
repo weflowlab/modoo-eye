@@ -7,6 +7,7 @@ import { Gutter } from "@payloadcms/ui";
 import { redirect } from "next/navigation";
 import { computeTrafficStats, PERIODS, type PageViewRow, type PeriodKey } from "@/lib/trafficStats";
 import { CLICK_LABEL, DEVICE_LABEL, SOURCE_LABEL } from "@/lib/tracking";
+import { TrafficStepNav } from "./TrafficStepNav";
 import {
   IconUsers,
   IconEye,
@@ -52,11 +53,17 @@ function Card({
 }) {
   return (
     <section className={`traffic__card ${className}`}>
-      <h2>
-        {Icon && <Icon className="traffic__card-icon" stroke={1.8} />}
-        {title}
-      </h2>
-      {desc && <p className="traffic__desc">{desc}</p>}
+      <div className="traffic__card-head">
+        {Icon && (
+          <i className="traffic__card-icon">
+            <Icon size={22} stroke={1.8} />
+          </i>
+        )}
+        <div>
+          <h2>{title}</h2>
+          {desc && <p className="traffic__desc">{desc}</p>}
+        </div>
+      </div>
       {children}
     </section>
   );
@@ -154,8 +161,10 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
       visibleEntities={visibleEntities}
       viewType="dashboard"
     >
-      <Gutter className="traffic">
-        <div className="traffic__head">
+      <TrafficStepNav />
+      {/* 글 편집 화면의 상단 바처럼, 스크롤해도 제목·기간 선택이 반투명 띠로 따라온다 */}
+      <div className="traffic__sticky">
+        <Gutter className="traffic__head">
           <h1>유입 관리</h1>
           <nav className="traffic__periods" aria-label="기간">
             {PERIODS.map((p) => (
@@ -164,8 +173,9 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
               </a>
             ))}
           </nav>
-        </div>
-
+        </Gutter>
+      </div>
+      <Gutter className="traffic">
         {views.docs.length === 0 && (
           <div className="traffic__card traffic__empty-card">아직 수집된 방문 데이터가 없습니다. 방문이 기록되면 여기에 유입·이탈 통계가 표시됩니다.</div>
         )}
@@ -176,9 +186,18 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
             [
               [IconUsers, "#0ea5e9", "방문자 수", `${stats.sessions.toLocaleString()}명`, "선택 기간 방문 고객"],
               [IconEye, "#6366f1", "본 페이지 수", `${stats.pageViews.toLocaleString()}회`, "고객들이 열어본 페이지"],
-              [IconDoorExit, "#f59e0b", "즉시 이탈률", `${stats.bounceRate}%`, `한 페이지만 보고 이탈 (${stats.bounced.toLocaleString()}명)`],
+              [
+                IconDoorExit,
+                "#f59e0b",
+                "즉시 이탈률",
+                `${stats.bounceRate}%`,
+                // 모바일에서만 줄바꿈 (PC 는 한 줄)
+                <>
+                  한 페이지만 보고 이탈 <br className="traffic__br-mobile" />({stats.bounced.toLocaleString()}명)
+                </>,
+              ],
               [IconClock, "#22c55e", "평균 머문 시간", fmtDuration(stats.avgDurationSec), "한 명이 머문 평균 시간"],
-            ] as [TablerIcon, string, string, string, string][]
+            ] as [TablerIcon, string, string, string, React.ReactNode][]
           ).map(([Icon, tint, label, value, sub]) => (
             <div key={label} className="traffic__stat" style={{ borderTopColor: tint }}>
               <span>
@@ -195,7 +214,9 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
 
         {topSource && stats.sessions > 0 && (
           <p className="traffic__lead">
-            <IconTrendingUp className="traffic__lead-icon" stroke={2} />
+            <i className="traffic__lead-icon">
+              <IconTrendingUp size={22} stroke={2.2} />
+            </i>
             {/* 문장은 한 덩어리로 묶는다 (모바일에서 flex 로 아이콘 옆에 세울 때 조각나지 않게) */}
             <span className="traffic__lead-text">
               고객이 가장 많이 들어온 곳은 <strong>{sourceLabel(topSource[0])}</strong>이에요 — 전체 방문자의{" "}
