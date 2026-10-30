@@ -87,27 +87,7 @@ export const Posts: CollectionConfig = {
               type: "date",
               admin: {
                 date: { pickerAppearance: "dayAndTime" },
-                description: "비우면 게시하는 순간으로 찍힙니다. 미래 시각으로 두고 게시하면 그 시각까지 사이트에 보이지 않다가 자동으로 공개됩니다. 지난 시각으로는 바꿀 수 없습니다.",
-              },
-              // 발행일을 지난 시각으로 바꾸는 것은 막는다. 예외: 지금 저장돼 있는 날짜 그대로, 또는 이미 발행된 버전의 날짜로 되돌리는 것.
-              // (오류 문구는 입력칸 옆 말풍선에 들어가야 해서 짧게. 자세한 안내는 아래 description)
-              validate: async (value, { previousValue, req, id }) => {
-                if (!value) return true;
-                if (req.context?.seed) return true; // 시드는 과거 발행일로 글을 넣는다
-
-                const next = new Date(value).getTime();
-                const same = (d?: Date | string | null) => !!d && new Date(d).getTime() === next;
-                if (same(previousValue)) return true;
-                if (next >= Date.now() - 5 * 60 * 1000) return true;
-                if (id) {
-                  try {
-                    const published = await req.payload.findByID({ collection: "posts", id, depth: 0, draft: false });
-                    if (same(published?.publishedAt)) return true;
-                  } catch {
-                    /* 아직 발행된 버전이 없으면 무시 */
-                  }
-                }
-                return "지난 시각으로는 발행할 수 없습니다";
+                description: "비우면 게시하는 순간으로 찍힙니다. 미래 시각으로 두면 그 시각까지 사이트에 보이지 않다가 자동으로 공개되고, 지난 시각으로 두면 그 날짜로 바로 발행됩니다(예전 글 옮겨 올 때).",
               },
               hooks: {
                 // 발행 시점에 비어 있으면 현재 시각으로
