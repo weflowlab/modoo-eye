@@ -10,6 +10,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 const ENDPOINT = "/next/track";
 const DID_KEY = "modoo_did";
 const NOTRACK_KEY = "modoo_notrack";
+const TRACK_KEY = "modoo_track"; // 로컬(localhost)에서 기록을 켠 표시 (?track=1 로 한 번 켬)
 
 const store = {
   get: (k: string) => {
@@ -47,12 +48,18 @@ function getSessionId(): string {
 
 function trackingDisabled(): boolean {
   const params = new URLSearchParams(window.location.search);
-  if (params.get("notrack") === "1") store.set(NOTRACK_KEY, "1");
-  if (params.get("track") === "1") store.del(NOTRACK_KEY);
+  if (params.get("notrack") === "1") {
+    store.set(NOTRACK_KEY, "1");
+    store.del(TRACK_KEY);
+  }
+  if (params.get("track") === "1") {
+    store.del(NOTRACK_KEY);
+    store.set(TRACK_KEY, "1"); // 로컬에서도 한 번 켜 두면 다음 페이지부터 주소에 안 붙여도 기록된다
+  }
   if (store.get(NOTRACK_KEY) === "1") return true;
   const host = window.location.hostname;
   const isLocal = host === "localhost" || host === "127.0.0.1";
-  return isLocal && params.get("track") !== "1";
+  return isLocal && store.get(TRACK_KEY) !== "1";
 }
 
 function send(body: Record<string, unknown>, beacon = false) {
