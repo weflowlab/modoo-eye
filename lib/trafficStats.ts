@@ -156,12 +156,13 @@ export function computeTrafficStats(all: PageViewRow[], period: PeriodKey, now =
     sources: sorted(sources),
     topPaths: sorted(paths).slice(0, 10),
     pathCounts: paths,
-    exitPages: sorted(exits).slice(0, 6),
+    // 많이 본 글만 상위 10편, 나머지(나간 페이지·첫 번째로 연 글·검색어)는 개수 제한 없이 전부
+    exitPages: sorted(exits),
     landingBySearch: Object.entries(landing)
       .sort((a, b) => Object.values(b[1]).reduce((x, y) => x + y, 0) - Object.values(a[1]).reduce((x, y) => x + y, 0))
-      .map(([source, m]) => ({ source, rows: sorted(m).slice(0, 6) })),
-    queries: sorted(queries).slice(0, 15),
-    adKeywords: sorted(adKeywords).slice(0, 15),
+      .map(([source, m]) => ({ source, rows: sorted(m) })),
+    queries: sorted(queries),
+    adKeywords: sorted(adKeywords),
     clicks: sorted(clicks),
     daily,
     devices: sorted(devices),

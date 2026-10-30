@@ -249,7 +249,7 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
         </Card>
 
         <div className="traffic__grid">
-          <Card icon={IconArticle} title="많이 본 글" desc="고객들이 가장 많이 읽은 글">
+          <Card icon={IconArticle} title="많이 본 글" desc="고객들이 가장 많이 읽은 글 (상위 10편)">
             <Bars rows={stats.topPaths} labelOf={nameOf} />
             {/* 전체 글: 0회인 글까지 조회수 순으로 */}
             <details className="traffic__all">
