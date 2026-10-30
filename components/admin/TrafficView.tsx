@@ -69,27 +69,58 @@ function Card({
   );
 }
 
-// 가로 막대 목록 (라벨 · 수 · 비율)
-function Bars({ rows, labelOf, unit = "회" }: { rows: [string, number][]; labelOf?: (k: string) => string; unit?: string }) {
+// 가로 막대 목록 (라벨 · 수 · 비율). limit 을 넘는 항목은 막대 대신 아래 "전체 보기" 펼침에 전부 나온다
+function Bars({
+  rows,
+  labelOf,
+  unit = "회",
+  limit,
+}: {
+  rows: [string, number][];
+  labelOf?: (k: string) => string;
+  unit?: string;
+  limit?: number;
+}) {
   if (rows.length === 0) return <p className="traffic__empty">데이터 없음</p>;
   const total = Math.max(1, rows.reduce((a, r) => a + r[1], 0)); // 막대는 전체 대비 비율만큼만 찬다 (괄호 안 퍼센트와 같은 길이)
+  const name = (k: string) => (labelOf ? labelOf(k) : k);
+  const pct = (n: number) => Math.round((n / total) * 100);
+  const shown = limit ? rows.slice(0, limit) : rows;
   return (
-    <ul className="traffic__bars">
-      {rows.map(([k, n]) => (
-        <li key={k}>
-          <span className="traffic__bar-label" title={k}>
-            {labelOf ? labelOf(k) : k}
-          </span>
-          <span className="traffic__bar-track">
-            <span className="traffic__bar-fill" style={{ width: `${(n / total) * 100}%` }} />
-          </span>
-          <span className="traffic__bar-value">
-            {n.toLocaleString()}
-            {unit} <small>({Math.round((n / total) * 100)}%)</small>
-          </span>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="traffic__bars">
+        {shown.map(([k, n]) => (
+          <li key={k}>
+            <span className="traffic__bar-label" title={k}>
+              {name(k)}
+            </span>
+            <span className="traffic__bar-track">
+              <span className="traffic__bar-fill" style={{ width: `${(n / total) * 100}%` }} />
+            </span>
+            <span className="traffic__bar-value">
+              {n.toLocaleString()}
+              {unit} <small>({pct(n)}%)</small>
+            </span>
+          </li>
+        ))}
+      </ul>
+      {limit && rows.length > limit && (
+        <details className="traffic__all">
+          <summary>전체 보기 ({rows.length}개)</summary>
+          <ol>
+            {rows.map(([k, n]) => (
+              <li key={k}>
+                <span>{name(k)}</span>
+                <strong>
+                  {n.toLocaleString()}
+                  {unit} ({pct(n)}%)
+                </strong>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+    </>
   );
 }
 
@@ -272,18 +303,18 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
             {stats.landingBySearch.map(({ source, rows }) => (
               <div key={source} className="traffic__sub">
                 <h3>{SOURCE_LABEL[source] ?? source}</h3>
-                <Bars rows={rows} labelOf={nameOf} unit="명" />
+                <Bars rows={rows} labelOf={nameOf} unit="명" limit={10} />
               </div>
             ))}
           </Card>
           <Card icon={IconSearch} title="무엇을 검색했나요?" desc="방문자가 웹블로그 검색창에 친 단어입니다">
-            <Bars rows={stats.queries} />
+            <Bars rows={stats.queries} limit={10} />
           </Card>
           <Card icon={IconPhoneCall} title="상담으로 이어졌나요?" desc="전화·네이버 톡톡·카카오채널·홈페이지 버튼을 누른 횟수">
             <Bars rows={stats.clicks} labelOf={(k) => CLICK_LABEL[k] ?? k} />
           </Card>
           <Card icon={IconLogout} title="어느 페이지에서 나갔나요?" desc="고객이 마지막으로 보고 떠난 페이지">
-            <Bars rows={stats.exitPages} labelOf={nameOf} unit="명" />
+            <Bars rows={stats.exitPages} labelOf={nameOf} unit="명" limit={10} />
           </Card>
         </div>
       </Gutter>
