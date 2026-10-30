@@ -78,6 +78,203 @@ button {
   display: none;
 }
 
+/* 유입 관리 화면 (components/admin/TrafficView) */
+.traffic {
+  padding-top: 8px;
+  padding-bottom: 48px;
+}
+.traffic__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.traffic__head h1 {
+  margin: 0;
+}
+.traffic__periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.traffic__periods a {
+  padding: 6px 14px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 999px;
+  color: var(--theme-elevation-700);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.traffic__periods a.is-on {
+  background: #004994;
+  border-color: #004994;
+  color: #fff;
+}
+.traffic__note,
+.traffic__hint {
+  color: var(--theme-elevation-500);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.traffic__note {
+  margin: 8px 0 20px;
+}
+.traffic__hint {
+  margin: -4px 0 12px;
+}
+.traffic__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.traffic__stat {
+  padding: 18px 20px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 12px;
+  background: var(--theme-elevation-0);
+}
+.traffic__stat span {
+  display: block;
+  color: var(--theme-elevation-500);
+  font-size: 13px;
+  font-weight: 600;
+}
+.traffic__stat strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #004994;
+  letter-spacing: -0.02em;
+}
+.traffic__card {
+  padding: 20px 22px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 12px;
+  background: var(--theme-elevation-0);
+  margin-bottom: 16px;
+}
+.traffic__card h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.traffic__card--muted {
+  background: var(--theme-elevation-50);
+}
+.traffic__empty-card {
+  text-align: center;
+  color: var(--theme-elevation-500);
+  padding: 32px;
+}
+.traffic__empty {
+  margin: 4px 0 0;
+  color: var(--theme-elevation-400);
+  font-size: 14px;
+}
+.traffic__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.traffic__sub h3 {
+  margin: 12px 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--theme-elevation-600);
+}
+/* 가로 막대 */
+.traffic__bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.traffic__bars li {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.traffic__bar-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.traffic__bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--theme-elevation-100);
+  overflow: hidden;
+}
+.traffic__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #004994;
+}
+.traffic__bar-value {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.traffic__bar-value small {
+  color: var(--theme-elevation-400);
+}
+/* 14일 세로 막대 */
+.traffic__daily {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 6px;
+  height: 160px;
+  align-items: end;
+}
+.traffic__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 4px;
+}
+.traffic__day-bar {
+  width: 100%;
+  max-width: 28px;
+  border-radius: 6px 6px 2px 2px;
+  background: #004994;
+  opacity: 0.85;
+}
+.traffic__day-value {
+  font-size: 11px;
+  font-weight: 700;
+  order: -1;
+  min-height: 14px;
+}
+.traffic__day-label {
+  font-size: 11px;
+  color: var(--theme-elevation-500);
+}
+@media (max-width: 1024px) {
+  .traffic__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .traffic__grid {
+    grid-template-columns: 1fr;
+  }
+  .traffic__bars li {
+    grid-template-columns: minmax(0, 8rem) 1fr auto;
+  }
+  .traffic__day-label {
+    font-size: 9px;
+  }
+}
+
 /* 확인 모달(삭제·발행 취소 등): 기본은 흐린 배경 위에 글자만 떠 있어 카드 형태로 */
 .confirmation-modal__wrapper {
   background: var(--theme-elevation-0);

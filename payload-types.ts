@@ -72,6 +72,7 @@ export interface Config {
     doctors: Doctor;
     media: Media;
     users: User;
+    'page-views': PageView;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'page-views': PageViewsSelect<false> | PageViewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -140,7 +142,7 @@ export interface Post {
   author: number | Doctor;
   thumbnail?: (number | null) | Media;
   /**
-   * 비우면 게시하는 순간으로 찍힙니다. 미래 시각으로 두고 게시하면 그 시각까지 사이트에 보이지 않다가 자동으로 공개됩니다. 지난 시각으로는 바꿀 수 없습니다.
+   * 비우면 게시하는 순간으로 찍힙니다. 미래 시각으로 두면 그 시각까지 사이트에 보이지 않다가 자동으로 공개되고, 지난 시각으로 두면 그 날짜로 바로 발행됩니다(예전 글 옮겨 올 때).
    */
   publishedAt?: string | null;
   /**
@@ -337,6 +339,27 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views".
+ */
+export interface PageView {
+  id: number;
+  sessionId: string;
+  path: string;
+  referrer?: string | null;
+  source?: string | null;
+  medium?: string | null;
+  keyword?: string | null;
+  query?: string | null;
+  device?: ('mobile' | 'tablet' | 'desktop') | null;
+  event?: ('view' | 'click') | null;
+  label?: string | null;
+  durationMs?: number | null;
+  maxScroll?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -378,6 +401,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'page-views';
+        value: number | PageView;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -598,6 +625,26 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views_select".
+ */
+export interface PageViewsSelect<T extends boolean = true> {
+  sessionId?: T;
+  path?: T;
+  referrer?: T;
+  source?: T;
+  medium?: T;
+  keyword?: T;
+  query?: T;
+  device?: T;
+  event?: T;
+  label?: T;
+  durationMs?: T;
+  maxScroll?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

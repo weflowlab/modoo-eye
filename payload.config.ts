@@ -15,6 +15,7 @@ import { Media } from "./collections/Media";
 import { Categories } from "./collections/Categories";
 import { Doctors } from "./collections/Doctors";
 import { Posts } from "./collections/Posts";
+import { PageViews } from "./collections/PageViews";
 import { Clinic } from "./globals/Clinic";
 import { HomePage } from "./globals/HomePage";
 
@@ -46,6 +47,11 @@ export default buildConfig({
         Logo: "@/components/admin/Logo#Logo",
         Icon: "@/components/admin/Icon#Icon",
       },
+      // 유입 관리: 왼쪽 메뉴 링크 + /admin/traffic 화면 (방문 기록 집계)
+      afterNavLinks: ["@/components/admin/TrafficNavLink#TrafficNavLink"],
+      views: {
+        traffic: { Component: "@/components/admin/TrafficView#TrafficView", path: "/traffic", exact: true },
+      },
     },
     // 미리보기 창 기기 크기 (글 작성 중 미리보기)
     livePreview: {
@@ -72,7 +78,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Posts, Categories, Doctors, Media, Users],
+  collections: [Posts, Categories, Doctors, Media, Users, PageViews],
   globals: [Clinic, HomePage],
   editor: lexicalEditor(),
   // 이메일 발송은 쓰지 않는다 (비밀번호 변경은 관리자 계정 메뉴에서, 분실 시 개발자가 재설정).

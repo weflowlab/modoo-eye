@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { FloatingCta } from "@/components/layout/FloatingCta";
 import { SiteProvider } from "@/components/SiteProvider";
 import { LivePreviewListener } from "@/components/LivePreviewListener";
+import { PageTracker } from "@/components/PageTracker";
 import { getSiteData } from "@/lib/payload";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
@@ -57,6 +58,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <SiteProvider value={site}>
           {/* 관리자 미리보기 중이면 저장할 때마다 새로고침 */}
           {isPreview && <LivePreviewListener />}
+          {/* 방문 기록 (관리자 "유입 관리"). 미리보기 중에는 세지 않는다 */}
+          <PageTracker disabled={isPreview} />
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
