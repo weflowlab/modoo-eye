@@ -51,7 +51,13 @@ export default buildConfig({
       afterNavLinks: ["@/components/admin/TrafficNavLink#TrafficNavLink"],
       afterDashboard: ["@/components/admin/DashboardTrafficLink#DashboardTrafficLink"], // "콘텐츠·설정" 아래 "통계 > 유입 관리" 카드
       views: {
-        traffic: { Component: "@/components/admin/TrafficView#TrafficView", path: "/traffic", exact: true },
+        traffic: {
+          Component: "@/components/admin/TrafficView#TrafficView",
+          path: "/traffic",
+          exact: true,
+          // 커스텀 화면은 탭 제목이 기본 "Payload" 라서 화면 이름으로 바꾼다 → "유입 관리 | 모두의안과 웹블로그 관리자페이지"
+          meta: { title: "유입 관리", description: "모두의안과 웹블로그 방문 통계", openGraph: { title: "유입 관리" } },
+        },
       },
     },
     // 미리보기 창 기기 크기 (글 작성 중 미리보기)
