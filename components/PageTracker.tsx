@@ -1,5 +1,5 @@
 "use client";
-// 방문 추적 스크립트 (프론트 레이아웃에 한 번). 페이지를 볼 때마다 /next/track 에 기록하고,
+// 방문 추적 스크립트 (프론트 레이아웃에 한 번). 페이지를 볼 때마다 /next/v 에 기록하고,
 // 나갈 때 체류시간·스크롤 도달률을 보낸다. 상담 버튼(전화·톡톡·카카오·홈페이지) 클릭도 기록한다.
 // - 한 방문 = 기기당 하루 (localStorage 의 기기 id + 한국시간 날짜)
 // - localhost 와 관리자 미리보기(draft 모드)는 세지 않는다. 주소 뒤에 ?track=1 을 붙이면 로컬에서도 기록(테스트용)
@@ -7,7 +7,8 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const ENDPOINT = "/next/track";
+// 주소에 "track" 이 들어가면 광고 차단 확장 프로그램이 요청을 막아 PC 방문이 집계에서 빠지므로 중립적인 이름을 쓴다
+const ENDPOINT = "/next/v";
 const DID_KEY = "modoo_did";
 const NOTRACK_KEY = "modoo_notrack";
 const TRACK_KEY = "modoo_track"; // 로컬(localhost)에서 기록을 켠 표시 (?track=1 로 한 번 켬)

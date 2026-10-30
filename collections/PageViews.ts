@@ -1,4 +1,4 @@
-// 방문 기록 컬렉션. 사이트 방문자 브라우저가 /next/track 으로 보내는 "어느 페이지를, 어디서 와서, 어떤 기기로 봤는지"를 쌓는다.
+// 방문 기록 컬렉션. 사이트 방문자 브라우저가 /next/v 로 보내는 "어느 페이지를, 어디서 와서, 어떤 기기로 봤는지"를 쌓는다.
 // 관리자 메뉴에는 보이지 않고, "유입 관리" 화면(components/admin/TrafficView)이 집계해서 보여 준다.
 // 개인을 식별하는 정보(IP·이름 등)는 저장하지 않는다. sessionId 는 기기당 하루 단위 임의 문자열.
 import type { CollectionConfig } from "payload";
@@ -7,7 +7,7 @@ export const PageViews: CollectionConfig = {
   slug: "page-views",
   labels: { singular: "방문 기록", plural: "방문 기록" },
   admin: { hidden: true },
-  // 쓰기는 /next/track 라우트가 Local API 로만 한다. 관리자만 읽고 지울 수 있다
+  // 쓰기는 /next/v 라우트가 Local API 로만 한다. 관리자만 읽고 지울 수 있다
   access: {
     read: ({ req }) => !!req.user,
     create: () => false,
