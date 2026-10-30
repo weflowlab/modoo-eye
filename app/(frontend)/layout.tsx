@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { draftMode } from "next/headers";
 import "../globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -59,7 +60,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {/* 관리자 미리보기 중이면 저장할 때마다 새로고침 */}
           {isPreview && <LivePreviewListener />}
           {/* 방문 기록 (관리자 "유입 관리"). 미리보기 중에는 세지 않는다 */}
-          <PageTracker disabled={isPreview} />
+          <Suspense fallback={null}>
+            <PageTracker disabled={isPreview} />
+          </Suspense>
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />

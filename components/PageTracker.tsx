@@ -5,7 +5,7 @@
 // - localhost 와 관리자 미리보기(draft 모드)는 세지 않는다. 주소 뒤에 ?track=1 을 붙이면 로컬에서도 기록(테스트용)
 // - 개인정보는 보내지 않는다 (경로·리퍼러·UTM·기기 종류만)
 import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const ENDPOINT = "/next/track";
 const DID_KEY = "modoo_did";
@@ -76,6 +76,8 @@ function clickLabel(a: HTMLAnchorElement): string {
 
 export function PageTracker({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.toString(); // /search 에서 검색어만 바뀌어도(경로는 그대로) 새 페이지 보기로 기록하려고 의존성에 넣는다
   const current = useRef<{ id: number; entry: number; flushed: boolean } | null>(null);
   const maxScroll = useRef(0);
 
@@ -101,7 +103,7 @@ export function PageTracker({ disabled = false }: { disabled?: boolean }) {
     flush();
     maxScroll.current = 0;
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(search);
     // 광고 클릭은 UTM 이 없어도 소스·매체를 채운다 (네이버 파워링크 n_*, 구글 gclid)
     const isNaverAd = !!(params.get("n_media") || params.get("n_keyword") || params.get("n_query") || params.get("n_ad"));
     const adSource = isNaverAd ? "naver" : params.get("gclid") ? "google" : "";
@@ -126,7 +128,7 @@ export function PageTracker({ disabled = false }: { disabled?: boolean }) {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, disabled]);
+  }, [pathname, search, disabled]);
 
   // 스크롤 도달률 + 체류시간 마감 + 상담 버튼 클릭
   useEffect(() => {
