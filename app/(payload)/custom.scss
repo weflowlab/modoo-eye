@@ -324,37 +324,50 @@ button {
   flex-direction: column;
   gap: 8px;
 }
+/* 막대 행: weflow 관리자 BarRow 와 같은 모양 (라벨 92px · 18px 높이 각진 막대 · 오른쪽 "2명 (100%)" 굵게, 모든 화면 동일) */
 .traffic__bars li {
-  display: grid;
-  grid-template-columns: minmax(0, 11rem) 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 12px;
+  min-width: 0;
 }
 .traffic__bar-label {
+  flex: 0 1 92px;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 600;
+  font-size: 0.86rem;
+  font-weight: 400;
+  color: var(--theme-elevation-600);
 }
 .traffic__bar-track {
-  height: 10px;
-  border-radius: 999px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 18px;
+  border-radius: 5px;
   background: var(--theme-elevation-100);
   overflow: hidden;
 }
 .traffic__bar-fill {
   display: block;
   height: 100%;
-  border-radius: 999px;
+  border-radius: 5px;
   background: #004994;
 }
 .traffic__bar-value {
+  flex: 0 1 92px;
+  min-width: 0;
+  text-align: right;
   white-space: nowrap;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--theme-elevation-800);
   font-variant-numeric: tabular-nums;
 }
 .traffic__bar-value small {
-  color: var(--theme-elevation-400);
+  font-size: inherit;
+  color: inherit;
 }
 /* 전체 글 펼침 목록 */
 .traffic__all {
@@ -449,9 +462,6 @@ button {
   .traffic__grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .traffic__bars li {
-    grid-template-columns: minmax(0, 8rem) 1fr auto;
-  }
   .traffic__day-label {
     font-size: 10px;
   }
@@ -518,13 +528,6 @@ button {
   }
   .traffic__card {
     padding: 16px;
-  }
-  .traffic__bars li {
-    grid-template-columns: minmax(0, 6.5rem) 1fr auto;
-    font-size: 13px;
-  }
-  .traffic__bar-value small {
-    display: none;
   }
 }
 
