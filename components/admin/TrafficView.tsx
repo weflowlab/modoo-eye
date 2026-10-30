@@ -72,8 +72,7 @@ function Card({
 // 가로 막대 목록 (라벨 · 수 · 비율)
 function Bars({ rows, labelOf, unit = "회" }: { rows: [string, number][]; labelOf?: (k: string) => string; unit?: string }) {
   if (rows.length === 0) return <p className="traffic__empty">데이터 없음</p>;
-  const max = Math.max(1, ...rows.map((r) => r[1]));
-  const total = rows.reduce((a, r) => a + r[1], 0);
+  const total = Math.max(1, rows.reduce((a, r) => a + r[1], 0)); // 막대는 전체 대비 비율만큼만 찬다 (괄호 안 퍼센트와 같은 길이)
   return (
     <ul className="traffic__bars">
       {rows.map(([k, n]) => (
@@ -82,7 +81,7 @@ function Bars({ rows, labelOf, unit = "회" }: { rows: [string, number][]; label
             {labelOf ? labelOf(k) : k}
           </span>
           <span className="traffic__bar-track">
-            <span className="traffic__bar-fill" style={{ width: `${(n / max) * 100}%` }} />
+            <span className="traffic__bar-fill" style={{ width: `${(n / total) * 100}%` }} />
           </span>
           <span className="traffic__bar-value">
             {n.toLocaleString()}
