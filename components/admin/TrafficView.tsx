@@ -175,20 +175,8 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
             <Bars rows={stats.clicks} labelOf={(k) => CLICK_LABEL[k] ?? k} />
           </section>
           <section className="traffic__card">
-            <h2>광고 키워드</h2>
-            <p className="traffic__hint">네이버·구글 광고로 들어온 경우의 검색어. 광고를 하지 않으면 비어 있습니다.</p>
-            <Bars rows={stats.adKeywords} />
-          </section>
-          <section className="traffic__card">
             <h2>기기</h2>
             <Bars rows={stats.devices} labelOf={(k) => DEVICE_LABEL[k] ?? k} />
-          </section>
-          <section className="traffic__card traffic__card--muted">
-            <h2>네이버·구글 검색어 보기</h2>
-            <p className="traffic__hint">
-              실제 검색어는 각 검색엔진의 사이트 도구에서만 볼 수 있습니다. 네이버 서치어드바이저, 구글 서치콘솔에 블로그를 등록해 두면 거기서 확인할 수
-              있습니다.
-            </p>
           </section>
         </div>
       </Gutter>
