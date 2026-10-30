@@ -196,8 +196,11 @@ export async function TrafficView({ initPageResult, params, searchParams }: Admi
         {topSource && stats.sessions > 0 && (
           <p className="traffic__lead">
             <IconTrendingUp className="traffic__lead-icon" stroke={2} />
-            고객이 가장 많이 들어온 곳은 <strong>{sourceLabel(topSource[0])}</strong>이에요 — 전체 방문자의{" "}
-            <strong>{Math.round((topSource[1] / stats.sessions) * 100)}%</strong>
+            {/* 문장은 한 덩어리로 묶는다 (모바일에서 flex 로 아이콘 옆에 세울 때 조각나지 않게) */}
+            <span className="traffic__lead-text">
+              고객이 가장 많이 들어온 곳은 <strong>{sourceLabel(topSource[0])}</strong>이에요 — 전체 방문자의{" "}
+              <strong>{Math.round((topSource[1] / stats.sessions) * 100)}%</strong>
+            </span>
           </p>
         )}
 
