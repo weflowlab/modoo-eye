@@ -799,6 +799,23 @@ export interface Home {
         id?: string | null;
       }[]
     | null;
+  doctorsShow?: boolean | null;
+  /**
+   * "의료진 소개" 부분은 남색으로 강조됩니다. 비우면 제목이 나오지 않습니다
+   */
+  doctorsTitle?: string | null;
+  /**
+   * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
+   */
+  doctorsText?: string | null;
+  /**
+   * 비우면 버튼이 나오지 않습니다
+   */
+  doctorsButton?: string | null;
+  /**
+   * 비우면 병원 홈페이지로 연결됩니다
+   */
+  doctorsLink?: string | null;
   /**
    * "|" 는 모바일에서만 줄바꿈, Enter 는 모든 화면에서 줄바꿈
    */
@@ -925,6 +942,11 @@ export interface HomeSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  doctorsShow?: T;
+  doctorsTitle?: T;
+  doctorsText?: T;
+  doctorsButton?: T;
+  doctorsLink?: T;
   summaryTitle?: T;
   summaryText?: T;
   keyPoints?:

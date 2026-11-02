@@ -1,11 +1,11 @@
 // 메인 페이지(/). 헤더/푸터는 app/(frontend)/layout.tsx 가 감싸고, 여기서는 본문 섹션만 순서대로 조립한다.
-// 구성: 히어로 → 배너 → 가장 많이 본 글 → 최신 글 → 병원 소개 → 장점 카드 → FAQ
-// (의료진 섹션은 고객 요청으로 제외. 의료진은 글 하단 작성자 카드에만 표시)
-// 데이터: Payload 'home' 글로벌(getHome) + 글 목록. 글로벌 값이 비어 있으면 각 섹션의 기본 문구를 쓴다.
+// 구성: 히어로 → 배너 → 의료진 소개 → 가장 많이 본 글 → 최신 글 → 병원 소개 → 장점 카드 → FAQ
+// 데이터: Payload 'home' 글로벌(getHome) + 의료진 + 글 목록. 관리자에서 비운 문구는 화면에도 나오지 않는다.
 import { Suspense } from "react";
-import { getHome, getLatestPosts, getPopularPosts } from "@/lib/payload";
+import { getDoctors, getHome, getLatestPosts, getPopularPosts } from "@/lib/payload";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ClinicIntroSection } from "@/components/home/ClinicIntroSection";
+import { DoctorsSection } from "@/components/home/DoctorsSection";
 import { PopularPostsSection } from "@/components/home/PopularPostsSection";
 import { LatestPostsSection } from "@/components/home/LatestPostsSection";
 import { SummarySection } from "@/components/home/SummarySection";
@@ -16,7 +16,7 @@ import { FaqSection } from "@/components/home/FaqSection";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [home, popular, latest] = await Promise.all([getHome(), getPopularPosts(4), getLatestPosts(8)]);
+  const [home, popular, latest, doctors] = await Promise.all([getHome(), getPopularPosts(4), getLatestPosts(8), getDoctors()]);
 
   return (
     <>
@@ -28,6 +28,9 @@ export default async function HomePage() {
       </Suspense>
       <Suspense>
         <ClinicIntroSection banners={home.banners} />
+      </Suspense>
+      <Suspense>
+        <DoctorsSection doctors={doctors} content={home} />
       </Suspense>
       <PopularPostsSection posts={popular} />
       <Suspense>

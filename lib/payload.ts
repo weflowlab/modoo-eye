@@ -215,6 +215,11 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       label: b.label ?? "",
       text: b.text ?? "",
     })),
+    doctorsShow: g?.doctorsShow !== false, // 저장한 적 없으면(null) 표시
+    doctorsTitle: g?.doctorsTitle ?? "",
+    doctorsText: g?.doctorsText ?? "",
+    doctorsButton: g?.doctorsButton ?? "",
+    doctorsLink: g?.doctorsLink ?? "",
     summaryTitle: g?.summaryTitle ?? "",
     summaryText: g?.summaryText ?? "",
     keyPoints: (g?.keyPoints ?? []).map((k) => ({ title: k.title ?? "", text: k.value })),

@@ -69,6 +69,47 @@ export const HomePage: GlobalConfig = {
           ],
         },
         {
+          label: "의료진 소개",
+          fields: [
+            { name: "doctorsShow", label: "메인 페이지에 의료진 소개 섹션 표시", type: "checkbox", defaultValue: () => true },
+            {
+              type: "collapsible",
+              label: "왼쪽 문구 (오른쪽 의료진 카드는 '의료진' 메뉴에서 관리)",
+              admin: { initCollapsed: false },
+              fields: [
+                {
+                  name: "doctorsTitle",
+                  label: "제목",
+                  type: "text",
+                  defaultValue: () => defaults.doctorsTitle(clinic),
+                  admin: { description: '"의료진 소개" 부분은 남색으로 강조됩니다. 비우면 제목이 나오지 않습니다' },
+                },
+                {
+                  name: "doctorsText",
+                  label: "문구",
+                  type: "textarea",
+                  defaultValue: () => defaults.DOCTORS_TEXT,
+                  admin: { description: BREAK_HINT },
+                },
+                {
+                  name: "doctorsButton",
+                  label: "버튼 글자",
+                  type: "text",
+                  defaultValue: () => defaults.DOCTORS_BUTTON,
+                  admin: { description: "비우면 버튼이 나오지 않습니다" },
+                },
+                {
+                  name: "doctorsLink",
+                  label: "버튼 링크",
+                  type: "text",
+                  defaultValue: () => defaults.DOCTORS_LINK,
+                  admin: { description: "비우면 병원 홈페이지 첫 화면으로 연결됩니다" },
+                },
+              ],
+            },
+          ],
+        },
+        {
           label: "소개·요약",
           fields: [
             {

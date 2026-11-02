@@ -24,6 +24,12 @@ export const BANNERS: { label: string; text: string }[] = [
   },
 ];
 
+// 의료진 소개 (왼쪽 문구만. 카드는 의료진 컬렉션에서 온다)
+export const doctorsTitle = (clinic: Pick<ClinicInfo, "name">) => `${clinic.name} 의료진 소개`;
+export const DOCTORS_TEXT = "망막·녹내장·백내장·외안부·성형안과 |분야별 전문의가 직접 진료합니다.";
+export const DOCTORS_BUTTON = "의료진 소개";
+export const DOCTORS_LINK = "https://modooeye.kr/base/comp/comp1.php"; // 병원 홈페이지 의료진 소개
+
 // 핵심 요약 (ABOUT)
 export const SUMMARY_TITLE = "대전 둔산동|망막·녹내장·백내장 전문 안과";
 export const summaryText = (clinic: Pick<ClinicInfo, "name" | "address">) =>

@@ -77,6 +77,12 @@ export type HomeContent = {
   searchPlaceholder: string;
   popularKeywords: string[];
   banners: { image?: ImageRef | null; mobileImage?: ImageRef | null; label: string; text: string }[];
+  // 의료진 소개 섹션 왼쪽 문구 (카드는 Doctor[] 에서). 비운 요소는 화면에 나오지 않는다
+  doctorsShow: boolean;
+  doctorsTitle: string;
+  doctorsText: string;
+  doctorsButton: string;
+  doctorsLink: string; // 비우면 병원 홈페이지
   summaryTitle: string;
   summaryText: string;
   keyPoints: { title: string; text: string }[]; // 장점 카드 (제목은 비울 수 있음)
