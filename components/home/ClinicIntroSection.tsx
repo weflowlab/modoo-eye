@@ -12,7 +12,6 @@ import { useSite } from "@/components/SiteProvider";
 import { useMounted } from "@/components/ui/useMounted";
 import { MobileBreaks } from "@/components/ui/MobileBreaks";
 import type { HomeContent } from "@/lib/types";
-import { BANNERS as DEFAULT_BANNERS } from "@/lib/homeDefaults"; // 기본 배너 2장 (글로벌에 배너가 없을 때). 이미지는 Placeholder
 
 type Banner = HomeContent["banners"][number];
 
@@ -23,12 +22,8 @@ type Props = {
 export function ClinicIntroSection({ banners: bannersProp }: Props) {
   const { clinic } = useSite();
   const mounted = useMounted();
-  // 배너 문구가 비어 있으면 기본 문구
-  const banners = (bannersProp && bannersProp.length > 0 ? bannersProp : DEFAULT_BANNERS).map((b, i) => ({
-    ...b,
-    label: b.label || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].label,
-    text: b.text || DEFAULT_BANNERS[i % DEFAULT_BANNERS.length].text,
-  }));
+  // 내용이 없으면 없는 대로: 배너가 하나도 없으면 섹션을 아예 그리지 않고, 문구를 비우면 이미지만 보인다 (기본 문구로 채우지 않는다)
+  const banners: Banner[] = bannersProp ?? [];
 
   // 배너 한 장 (서버 프리렌더 시 첫 장만, 마운트 후 swiper 슬라이드로)
   const renderBanner = (b: Banner, i: number) => {
@@ -57,11 +52,13 @@ export function ClinicIntroSection({ banners: bannersProp }: Props) {
 
         {/* 오버레이 문구 */}
         <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-site-4xl absolute inset-0 flex flex-col justify-start py-15 md:py-30">
-          <h2 className="max-w-2xl text-xl font-bold leading-tight whitespace-pre-line md:text-5xl">{b.label}</h2>
-          <p className="mt-4 max-w-xl text-base text-background/85 whitespace-pre-line md:text-xl">
-            {/* "|" 는 모바일에서만 줄바꿈 */}
-            <MobileBreaks text={b.text} />
-          </p>
+          {b.label && <h2 className="max-w-2xl text-xl font-bold leading-tight whitespace-pre-line md:text-5xl">{b.label}</h2>}
+          {b.text && (
+            <p className="mt-4 max-w-xl text-base text-background/85 whitespace-pre-line md:text-xl">
+              {/* "|" 는 모바일에서만 줄바꿈 */}
+              <MobileBreaks text={b.text} />
+            </p>
+          )}
           <div className="mt-4 md:mt-6">
             {/* 레퍼런스: 흰 알약 버튼, hover 시 primary 배경. 병원 소개는 기존 홈페이지로 연결 */}
             <Button
@@ -79,6 +76,8 @@ export function ClinicIntroSection({ banners: bannersProp }: Props) {
       </div>
     );
   };
+
+  if (banners.length === 0) return null;
 
   return (
     <section className="relative overflow-hidden text-background">
