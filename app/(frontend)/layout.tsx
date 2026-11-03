@@ -20,9 +20,15 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: `${clinic.name} 웹블로그`, template: `%s | ${clinic.name}` },
     description: `${clinic.name} 의료진이 직접 쓰는 안과 질환 정보. 망막·녹내장·백내장·외안부·성형안과 질환의 증상, 검사, 치료 안내.`,
     alternates: { types: { "application/rss+xml": "/rss.xml" } },
-    // 공유 이미지는 app/(frontend)/opengraph-image.png (로고) 가 기본. 글 페이지는 썸네일이 있으면 썸네일로 대체된다
-    openGraph: { type: "website", siteName: clinic.name, locale: "ko_KR" },
+    // 공유 이미지는 app/(frontend)/opengraph-image.png (로고) 가 기본. 글 페이지는 썸네일이 있으면 썸네일로 대체된다.
+    // 주소는 metadataBase(NEXT_PUBLIC_SERVER_URL) 기준으로 절대 주소가 된다
+    openGraph: { type: "website", siteName: `${clinic.name} 웹블로그`, locale: "ko_KR", url: "/" },
     twitter: { card: "summary_large_image" },
+    // 검색엔진 소유 확인 (구글 서치콘솔·네이버 서치어드바이저). Vercel 환경변수에 값을 넣으면 <head> 에 붙는다
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      other: process.env.NAVER_SITE_VERIFICATION ? { "naver-site-verification": process.env.NAVER_SITE_VERIFICATION } : undefined,
+    },
   };
 }
 

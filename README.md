@@ -1,7 +1,8 @@
 # 모두의안과 웹블로그
 
 대전 둔산동 모두의안과(modooeye.kr)의 병원 웹블로그. 의료진이 쓰는 안과 질환 정보를 검색엔진과 AI 검색에 노출하는 것이 목적이다.
-서비스 주소는 `blog.modooeye.kr` (서브도메인) 로 예정.
+서비스 주소는 `https://modooeyeblog.kr` (가비아 등록, Vercel 연결). 기존 홈페이지 DNS 를 쓸 수 없어 별도 도메인을 쓴다.
+`modoo-eye.vercel.app` 과 `www.` 로 들어오면 proxy.ts 가 정식 주소로 301 한다.
 
 - **프론트**: Next.js 16 App Router, Tailwind v4, Pretendard
 - **관리자(CMS)**: Payload CMS 3 — 같은 프로젝트 안의 `/admin`
@@ -49,8 +50,11 @@ app/globals.css        디자인 토큰. 브랜드 색은 --brand-primary / --br
 
 ## 배포 전 할 일
 
-- [ ] 카페24 DNS 에 `blog` CNAME 추가 (Vercel 안내값)
-- [ ] `NEXT_PUBLIC_SERVER_URL=https://blog.modooeye.kr`, `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `DATABASE_URI`(+`DATABASE_AUTH_TOKEN`) 설정
+- [ ] 가비아 DNS: `@` A 레코드 `76.76.21.21`, `www` CNAME `cname.vercel-dns.com` (Vercel 도메인 화면의 안내값 우선)
+- [ ] Vercel 프로젝트 Domains 에 `modooeyeblog.kr` + `www.modooeyeblog.kr` 추가
+- [ ] Vercel 환경변수 `NEXT_PUBLIC_SERVER_URL=https://modooeyeblog.kr` 로 바꾸고 재배포 (OG·사이트맵·RSS·미리보기 주소가 전부 여기서 나온다)
+- [ ] 검색엔진 등록: 구글 서치콘솔·네이버 서치어드바이저에 사이트 추가 → 확인 코드를 `GOOGLE_SITE_VERIFICATION`, `NAVER_SITE_VERIFICATION` 환경변수로 → 사이트맵 `https://modooeyeblog.kr/sitemap.xml` 제출
+- [ ] `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `DATABASE_URI`, `BLOB_READ_WRITE_TOKEN` 설정
 - [ ] 관리자 비밀번호 변경, 시드 샘플 글 삭제 또는 실제 글로 교체
 - [ ] 이미지 스토리지 어댑터 연결
 - [ ] 기존 홈페이지 메뉴에 블로그 링크 추가 요청
