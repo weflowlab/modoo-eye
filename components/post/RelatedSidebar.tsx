@@ -11,15 +11,20 @@ type Props = {
   categorySlug: string;
   categoryName: string;
   className?: string;
+  // 같은 주제 글이 없어 최신 글로 대신 채울 때 문구·링크를 바꾼다 (기본은 "관련 글" + 이 주제 전체 보기)
+  eyebrow?: string;
+  title?: string;
+  allHref?: string;
+  allLabel?: string;
 };
 
-export function RelatedSidebar({ posts, categorySlug, categoryName, className = "" }: Props) {
+export function RelatedSidebar({ posts, categorySlug, categoryName, className = "", eyebrow = "RELATED", title = "관련 글", allHref, allLabel }: Props) {
   if (posts.length === 0) return null;
   return (
-    <aside className={`hidden lg:block ${className}`} aria-label="관련 글">
+    <aside className={`hidden lg:block ${className}`} aria-label={title}>
       <div className="sticky top-24 rounded-[11px] border border-neutral-200 bg-neutral-50 p-5">
-        <p className="text-xs font-semibold text-primary">RELATED</p>
-        <p className="mt-0.5 text-lg font-bold text-foreground">관련 글</p>
+        <p className="text-xs font-semibold text-primary">{eyebrow}</p>
+        <p className="mt-0.5 text-lg font-bold text-foreground">{title}</p>
 
         <ul className="mt-4 space-y-4">
           {posts.map((p) => (
@@ -45,10 +50,10 @@ export function RelatedSidebar({ posts, categorySlug, categoryName, className = 
         </ul>
 
         <Link
-          href={`/${categorySlug}`}
+          href={allHref ?? `/${categorySlug}`}
           className="mt-5 flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-700 transition-colors hover:border-primary hover:text-primary"
         >
-          {categoryName} 글 전체 보기
+          {allLabel ?? `${categoryName} 글 전체 보기`}
           <IconArrowRight className="size-4" />
         </Link>
       </div>
