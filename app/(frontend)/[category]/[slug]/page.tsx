@@ -131,7 +131,8 @@ export default async function PostPage({ params }: PageProps<"/[category]/[slug]
       <div className="lg:grid lg:grid-cols-[clamp(220px,20vw,300px)_minmax(0,1fr)] lg:gap-[6.25vw]">
         <RelatedSidebar posts={related} categorySlug={post.category} categoryName={cat?.name ?? post.categoryName ?? post.category} />
 
-        <article>
+        {/* 관련 글이 없으면 사이드바가 빠지므로 본문이 좁은 첫 칸으로 밀리지 않게 두 칸을 다 쓰고 가운데에 둔다 */}
+        <article className={related.length === 0 ? "lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-3xl" : undefined}>
           {/* 2. 제목 + 작성자·날짜 + 공유/링크 복사 */}
           <div className="mb-10 border-b border-neutral-200 pb-10">
             <h1 className="text-2xl font-bold leading-tight md:text-4xl">{post.title}</h1>
