@@ -1,38 +1,26 @@
 "use client";
 // 글 본문 상단 가로형 이미지 슬라이드. 글 상세(prose-content) 맨 위에 배치.
-// 정방형 사진을 한 장씩, 4.2초 자동재생, ◀ ▶ 화살표, 점 인디케이터, 끝에서 처음으로 되감기. 본문 폭에 꽉 차게(글의 시작·끝선과 사진 가장자리가 일치).
+// 관리자에서 올린 사진만 올린 장수만큼 보여 준다. 사진이 없으면 아무것도 그리지 않고, 한 장이면 화살표·점 없이 한 장만.
+// 두 장 이상이면 정방형 사진을 한 장씩, 4.2초 자동재생, ◀ ▶ 화살표, 점 인디케이터, 끝에서 처음으로 되감기.
+// 본문 폭에 꽉 차게(글의 시작·끝선과 사진 가장자리가 일치).
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import Image from "next/image";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { useMounted } from "@/components/ui/useMounted";
 import type { ImageRef } from "@/lib/types";
 
-// 이미지가 없을 때 쓰는 자리표시 5장 (레퍼런스: 슬라이드 5장)
-const PLACEHOLDERS = [
-  "본문 이미지 1 (진단과 치료 안내)",
-  "본문 이미지 2 (유형 구분)",
-  "본문 이미지 3 (정밀검사 안내)",
-  "본문 이미지 4 (치료 과정)",
-  "본문 이미지 5 (정기검진·생활관리)",
-];
-
 type Props = { images?: ImageRef[] };
 
-// 슬라이드 한 장: 실제 이미지면 next/image, 아니면 Placeholder
-function Slide({ image, label }: { image?: ImageRef; label: string }) {
-  if (image) {
-    return (
-      <div className="relative aspect-square w-full overflow-hidden rounded-[12px] bg-muted">
-        {/* prose-content 의 img 여백 규칙이 적용되면 위에 회색 띠가 생기므로 m-0! 로 막는다 */}
-        <Image src={image.url} alt={image.alt || label} fill sizes="(min-width: 1024px) 700px, 100vw" className="m-0! rounded-none! object-cover" />
-      </div>
-    );
-  }
-  return <Placeholder label={label} className="aspect-square w-full rounded-[12px]" />;
+function Slide({ image, label }: { image: ImageRef; label: string }) {
+  return (
+    <div className="relative aspect-square w-full overflow-hidden rounded-[12px] bg-muted">
+      {/* prose-content 의 img 여백 규칙이 적용되면 위에 회색 띠가 생기므로 m-0! 로 막는다 */}
+      <Image src={image.url} alt={image.alt || label} fill sizes="(min-width: 1024px) 700px, 100vw" className="m-0! rounded-none! object-cover" />
+    </div>
+  );
 }
 
 export function PostImageSlider({ images = [] }: Props) {
@@ -41,13 +29,13 @@ export function PostImageSlider({ images = [] }: Props) {
   const [perView, setPerView] = useState(1);
   const mounted = useMounted();
 
-  // CMS 이미지가 있으면 그걸, 없으면 자리표시 5장
-  const SLIDES = images.length
-    ? images.map((img, i) => ({ key: `${img.url}-${i}`, image: img, label: img.alt || `본문 이미지 ${i + 1}` }))
-    : PLACEHOLDERS.map((label) => ({ key: label, image: undefined, label }));
+  // 사진이 없으면 영역 자체를 두지 않는다 (예전엔 자리표시 5장이 나와 글이 지저분해 보였다)
+  if (images.length === 0) return null;
 
-  // 서버 프리렌더 중엔 자동재생 swiper 대신 첫 장만 정적으로 표시 (레이아웃 유지)
-  if (!mounted) {
+  const SLIDES = images.map((img, i) => ({ key: `${img.url}-${i}`, image: img, label: img.alt || `본문 이미지 ${i + 1}` }));
+
+  // 한 장뿐이거나 서버 프리렌더 중이면 첫 장만 정적으로 (한 장일 땐 화살표·점이 필요 없다)
+  if (SLIDES.length === 1 || !mounted) {
     return (
       <div className="relative mb-[30px]">
         <div className="overflow-hidden rounded-[14px]">

@@ -61,7 +61,7 @@ function SectionsBody({ post }: Props) {
 export function PostBody({ post }: Props) {
   return (
     <div className="prose-content mt-8">
-      {/* 본문 상단 이미지 슬라이드 3장 (◀ ▶ 이동. CMS 이미지 없으면 자리표시) */}
+      {/* 본문 상단 이미지 슬라이드 (관리자에서 올린 장수만큼. 없으면 아예 안 그린다) */}
       <PostImageSlider images={post.images} />
 
       {/* 본문: Payload 리치텍스트 우선, 없으면 섹션 HTML. 첫 문단이 도입(리드) 역할을 한다 */}
