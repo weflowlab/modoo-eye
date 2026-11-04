@@ -1,7 +1,7 @@
 // 사이트 푸터 (자체 구성). 연한 회색 배경 3열: 로고 + 주소·지도 / 진료시간 / 상담·예약(네이버 톡톡 + 대표전화).
 // 하단 바: 법적 링크 + 저작권. 데이터는 Payload 병원 정보(getClinic). 상담 채널은 네이버 톡톡 하나만 쓴다.
 import Image from "next/image";
-import { IconExternalLink, IconMapPin, IconMessageCircle, IconPhone } from "@tabler/icons-react";
+import { IconMapPin, IconMessageCircle, IconPhone } from "@tabler/icons-react";
 import { getClinic } from "@/lib/payload";
 import { Container } from "@/components/ui/Container";
 
@@ -101,7 +101,7 @@ export async function SiteFooter() {
         </div>
       </Container>
 
-      {/* 하단 바: 법적 링크 + 저작권 + 제작사(위플로우) 버튼 */}
+      {/* 하단 바: 법적 링크 + 저작권 */}
       <div className="border-t border-neutral-200">
         <Container size="4xl" className="flex flex-col items-center gap-3 py-5 text-sm text-neutral-500 md:flex-row md:justify-between">
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-1">
@@ -113,21 +113,7 @@ export async function SiteFooter() {
               </li>
             ))}
           </ul>
-          <div className="flex flex-col items-center gap-3 md:flex-row md:gap-5">
-            <p>© 2026 {clinic.name}. All rights reserved.</p>
-            {/* 제작사 크레딧: 지도 링크 버튼과 같은 톤의 흰 알약 */}
-            <a
-              href="https://weflowlab.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex h-9 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3.5 text-neutral-500 transition-colors hover:border-primary hover:text-primary"
-            >
-              홈페이지 제작
-              <span className="font-bold tracking-wide text-neutral-900">WEFLOW</span>
-              {/* 호버하면 바깥 링크 아이콘이 오른쪽 위로 살짝 이동 */}
-              <IconExternalLink className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
-          </div>
+          <p>© 2026 {clinic.name}. All rights reserved.</p>
         </Container>
       </div>
     </footer>
