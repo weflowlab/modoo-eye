@@ -11,6 +11,8 @@ import { PageTracker } from "@/components/PageTracker";
 import { getSiteData } from "@/lib/payload";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+// 네이버 서치어드바이저 소유 확인 코드 (modooeyeblog.kr, 2026-11-05 발급)
+const NAVER_SITE_VERIFICATION = "61a058e226687d48e9e93acd49a0df83ae023d58";
 
 // 사이트 전역 메타. 병원명은 Payload 병원 정보에서 읽는다.
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,10 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
     // 주소는 metadataBase(NEXT_PUBLIC_SERVER_URL) 기준으로 절대 주소가 된다
     openGraph: { type: "website", siteName: `${clinic.name} 웹블로그`, locale: "ko_KR", url: "/" },
     twitter: { card: "summary_large_image" },
-    // 검색엔진 소유 확인 (구글 서치콘솔·네이버 서치어드바이저). Vercel 환경변수에 값을 넣으면 <head> 에 붙는다
+    // 검색엔진 소유 확인 (구글 서치콘솔·네이버 서치어드바이저). 공개되는 값이라 코드에 둔다. 환경변수가 있으면 그 값이 우선
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
-      other: process.env.NAVER_SITE_VERIFICATION ? { "naver-site-verification": process.env.NAVER_SITE_VERIFICATION } : undefined,
+      other: { "naver-site-verification": process.env.NAVER_SITE_VERIFICATION || NAVER_SITE_VERIFICATION },
     },
   };
 }
